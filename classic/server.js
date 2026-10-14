@@ -74,26 +74,32 @@ const SHELL_CSS =
   'body { margin: 0px; }\n' +
   'a.band { text-decoration: none; }\n' +
   '.cap { font-family: Helvetica, Arial, sans-serif; font-size: 10px; letter-spacing: 2px; }\n' +
-  '.ttl { font-family: Times, "Times New Roman", serif; font-size: 40px; line-height: 44px; }\n' +
-  '.abt { font-family: Times, "Times New Roman", serif; font-size: 15px; line-height: 19px; }\n';
+  '.ttl { font-family: Times, "Times New Roman", serif; font-size: 28px; line-height: 30px; }\n' +
+  '.abt { font-family: Times, "Times New Roman", serif; font-size: 14px; line-height: 17px; }\n';
 
+/* The label over each prototype, kept to about 80 pixels so that the screen
+   below it fits a small browser window: the way back, the title and credit,
+   and what to do. */
 function band(agent, req) {
   var L = agent.label, i = agent.index, n = AGENTS.length;
   var prev = AGENTS[(i + n - 1) % n], next = AGENTS[(i + 1) % n];
   function link(href, text, colour) { return '<a class="band" href="' + href + '"><font color="' + (colour || C.lilac) + '">' + text + '</font></a>'; }
+  function cap(text, colour) { return '<font face="Helvetica,Arial" size="1" class="cap" color="' + (colour || C.lilac) + '">' + text + '</font>'; }
   return '<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="' + C.indigo + '"><tr><td>' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
-    '<td width="20">' + spacer(20, 1) + '</td>' +
-    '<td valign="top" nowrap>' + spacer(1, 12) + '<br><font face="Helvetica,Arial" size="1" class="cap">' + link(BASE + '/', '&laquo;&nbsp;THE ORIGINAL AGENTS') + '</font></td>' +
-    '<td valign="top" align="right" nowrap>' + spacer(1, 12) + '<br><font face="Helvetica,Arial" size="1" class="cap" color="' + C.lilac + '">' +
-    link(BASE + '/' + agent.key + '/', 'START OVER') + ' &nbsp; &nbsp; &nbsp; &nbsp; ' + link(BASE + '/' + prev.key + '/', '&laquo;') + ' &nbsp; ' +
-    '<font color="#ffffff">' + (i + 1) + '</font> / ' + n + ' &nbsp; ' + link(BASE + '/' + next.key + '/', '&raquo;') + '</font></td>' +
-    '<td width="20">' + spacer(20, 1) + '</td></tr>' +
-    '<tr><td></td><td valign="top" width="40%" nowrap>' + spacer(1, 10) + '<br><font face="Times" size="6" class="ttl" color="' + (L.red ? C.red : C.yellow) + '">' + esc(L.title) + '</font><br>' +
-    spacer(1, 6) + '<br><font face="Helvetica,Arial" size="1" class="cap" color="' + C.lilac + '">' + esc(L.credit.toUpperCase()) + '</font></td>' +
-    '<td valign="top">' + spacer(30, 14) + '<br><font face="Times" size="3" class="abt" color="#ffffff">' + L.about + '</font><br>' + spacer(1, 8) + '<br>' +
-    '<font face="Helvetica,Arial" size="1" class="cap" color="' + C.yellow + '">USE IT</font>&nbsp;&nbsp; <font face="Times" size="3" class="abt" color="#ffffff">' + L.hint + '</font></td>' +
-    '<td></td></tr><tr><td colspan="4">' + spacer(1, 16) + '</td></tr></table></td></tr></table>';
+    '<td width="16">' + spacer(16, 1) + '</td>' +
+    '<td valign="top" nowrap>' + spacer(1, 7) + '<br>' + cap(link(BASE + '/', '&laquo;&nbsp;THE ORIGINAL AGENTS')) + '</td>' +
+    '<td valign="top" align="right" nowrap>' + spacer(1, 7) + '<br>' +
+    cap(link(BASE + '/' + agent.key + '/', 'START OVER') + ' &nbsp; &nbsp; &nbsp; ' + link(BASE + '/' + prev.key + '/', '&laquo;') + ' &nbsp; ' +
+      '<font color="#ffffff">' + (i + 1) + '</font> / ' + n + ' &nbsp; ' + link(BASE + '/' + next.key + '/', '&raquo;')) + '</td>' +
+    '<td width="16">' + spacer(16, 1) + '</td></tr>' +
+    '<tr><td></td><td colspan="2"><table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
+    '<td valign="top" nowrap><font face="Times" size="5" class="ttl" color="' + (L.red ? C.red : C.yellow) + '">' + esc(L.title) + '</font></td>' +
+    '<td width="22">' + spacer(22, 1) + '</td>' +
+    '<td valign="top" width="100%">' + spacer(1, 8) + '<br>' + cap('USE IT', C.yellow) + '&nbsp;&nbsp; <font face="Times" size="3" class="abt" color="#ffffff">' + L.hint + '</font></td>' +
+    '</tr></table></td><td></td></tr>' +
+    '<tr><td></td><td colspan="2">' + spacer(1, 2) + '<br>' + cap(esc(L.credit.toUpperCase())) + '</td><td></td></tr>' +
+    '<tr><td colspan="4">' + spacer(1, 8) + '</td></tr></table></td></tr></table>';
 }
 
 function document_(req, o) {
@@ -117,36 +123,36 @@ const PROTOS = [
 
 function startPage(req) {
   var css =
-    '.big { font-family: Times, "Times New Roman", serif; font-size: 72px; line-height: 76px; }\n' +
-    '.lede { font-family: Times, "Times New Roman", serif; font-size: 19px; line-height: 25px; }\n' +
-    '.quote { font-family: Times, "Times New Roman", serif; font-size: 16px; line-height: 22px; font-style: italic; }\n' +
-    '.name { font-family: Times, "Times New Roman", serif; font-size: 24px; line-height: 28px; color: #ffffff; }\n' +
-    '.what { font-family: Times, "Times New Roman", serif; font-size: 14px; line-height: 18px; }\n';
+    '.big { font-family: Times, "Times New Roman", serif; font-size: 54px; line-height: 56px; }\n' +
+    '.lede { font-family: Times, "Times New Roman", serif; font-size: 18px; line-height: 23px; }\n' +
+    '.quote { font-family: Times, "Times New Roman", serif; font-size: 15px; line-height: 20px; font-style: italic; }\n' +
+    '.name { font-family: Times, "Times New Roman", serif; font-size: 22px; line-height: 25px; color: #ffffff; }\n' +
+    '.what { font-family: Times, "Times New Roman", serif; font-size: 14px; line-height: 17px; }\n';
   function cap(text, colour) { return '<font face="Helvetica,Arial" size="1" class="cap" color="' + (colour || C.lilac) + '">' + text + '</font>'; }
   var cols = PROTOS.map(function (p, i) {
     var href = BASE + '/' + p.key + '/';
-    return '<td valign="top" width="25%"><a href="' + href + '">' + img(p.thumb, 172, 97, 'alt="' + p.name + '"') + '</a><br>' + spacer(1, 14) + '<br>' +
-      cap('PROTOTYPE ' + (i + 1)) + '<br>' + spacer(1, 4) + '<br>' +
-      '<a class="band" href="' + href + '"><font face="Times" size="5" class="name" color="#ffffff">' + p.name + '</font></a><br>' + spacer(1, 4) + '<br>' +
-      '<font face="Times" size="2" class="what" color="' + C.soft + '">' + p.what + '</font><br>' + spacer(1, 8) + '<br>' +
+    return '<td valign="top" width="25%"><a href="' + href + '">' + img(p.thumb, 172, 97, 'alt="' + p.name + '"') + '</a><br>' + spacer(1, 10) + '<br>' +
+      cap('PROTOTYPE ' + (i + 1)) + '<br>' + spacer(1, 2) + '<br>' +
+      '<a class="band" href="' + href + '"><font face="Times" size="5" class="name" color="#ffffff">' + p.name + '</font></a><br>' + spacer(1, 2) + '<br>' +
+      '<font face="Times" size="2" class="what" color="' + C.soft + '">' + p.what + '</font><br>' + spacer(1, 6) + '<br>' +
       '<a class="band" href="' + href + '">' + cap('USE IT &raquo;', C.yellow) + '</a></td>' +
       (i < PROTOS.length - 1 ? '<td width="14">' + spacer(14, 1) + '</td>' : '');
   }).join('');
   var html =
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td width="22">' + spacer(22, 1) + '</td><td>' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
-    '<td>' + spacer(1, 26) + '<br>' + cap('MIT MEDIA LAB &nbsp;/&nbsp; SOFTWARE AGENTS GROUP') + '</td>' +
-    '<td align="right">' + spacer(1, 26) + '<br>' + cap('1994 - 1999') + '</td></tr></table>' +
-    spacer(1, 18) + '<br><font face="Times" size="7" class="big" color="' + C.yellow + '">The Original Agents</font><br>' + spacer(1, 18) + '<br>' +
+    '<td>' + spacer(1, 16) + '<br>' + cap('MIT MEDIA LAB &nbsp;/&nbsp; SOFTWARE AGENTS GROUP') + '</td>' +
+    '<td align="right">' + spacer(1, 16) + '<br>' + cap('1994 - 1999') + '</td></tr></table>' +
+    spacer(1, 8) + '<br><font face="Times" size="7" class="big" color="' + C.yellow + '">The Original Agents</font><br>' + spacer(1, 10) + '<br>' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
     '<td valign="top" width="50%"><font face="Times" size="4" class="lede" color="#ffffff">Four software agents from Pattie Maes’s group, recreated as working prototypes. Choose one below and use it, just as people did in the 1990s.</font></td>' +
     '<td width="40">' + spacer(40, 1) + '</td>' +
     '<td valign="top"><font face="Times" size="3" class="quote" color="' + C.soft + '"><i>"We need to be able to delegate to what could be thought of as ‘extra eyes or extra ears’ that are on the lookout for things that you may be interested in."</i></font><br>' +
     spacer(1, 10) + '<br>' + cap('PATTIE MAES, DEBATING BEN SHNEIDERMAN, 1997') + '</td></tr></table>' +
-    spacer(1, 22) + '<br><table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td bgcolor="#7d7bbf">' + spacer(1, 1) + '</td></tr></table>' +
-    spacer(1, 16) + '<br>' + cap('CHOOSE A PROTOTYPE TO USE', C.yellow) + '<br>' + spacer(1, 14) + '<br>' +
+    spacer(1, 12) + '<br><table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td bgcolor="#7d7bbf">' + spacer(1, 1) + '</td></tr></table>' +
+    spacer(1, 10) + '<br>' + cap('CHOOSE A PROTOTYPE TO USE', C.yellow) + '<br>' + spacer(1, 8) + '<br>' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' + cols + '</tr></table>' +
-    spacer(1, 30) + '<br>' + cap('AFTER "DIRECT MANIPULATION VS. INTERFACE AGENTS", INTERACTIONS, NOV-DEC 1997') + '<br>' + spacer(1, 24) +
+    spacer(1, 14) + '<br>' + cap('AFTER "DIRECT MANIPULATION VS. INTERFACE AGENTS", INTERACTIONS, NOV-DEC 1997') + '<br>' + spacer(1, 10) +
     '</td><td width="22">' + spacer(22, 1) + '</td></tr></table>';
   return document_(req, { title: 'The Original Agents', css: css, html: html });
 }

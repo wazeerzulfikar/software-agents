@@ -12,7 +12,6 @@ const { esc, rng, img, spacer, select, hidden } = require('./lib');
 const label = {
   title: 'Transactions: Kasbah',
   credit: 'Anthony Chavez & Pattie Maes, 1996',
-  about: 'Kasbah is a marketplace where you do not haggle yourself: you tell an agent what to sell, what to ask and how low it may go, and it bargains with other people’s buying agents for you.',
   hint: 'Go to <i>agents</i>, then <i>Create a new selling agent</i>, and press <i>Create Agent</i> at the foot of the form. Left blank, it sells <i>The Joshua Tree</i> by U2 for $12.'
 };
 
@@ -202,8 +201,8 @@ function pages(st, req) {
       title: 'Kasbah Prototype Version 2 Welcome Page',
       html: function () {
         var n = st.unread;
-        return nav('home') + '<center>' + spacer(1, 30) + '<br>' + img('kb-welcome.jpg', 240, 216, 'alt="Welcome to Kasbah"') + '</center>' +
-          '<h2 align="center">Welcome to Kasbah, ' + USER + ' !</h2><hr>' + spacer(1, 14) +
+        return nav('home') + '<center>' + img('kb-welcome.jpg', 170, 153, 'alt="Welcome to Kasbah"') + '</center>' +
+          '<h2 align="center">Welcome to Kasbah, ' + USER + ' !</h2><hr>' +
           '<p><font color="#444444">This is your homepage, ' + USER + '. Every once in a while, you should probably check to see if your agents have sent you any <a href="' + go('MESSAGES') + '">messages</a>. To create new agents, see <i>your</i> currently active agents, or have a look at all agents which are presently active in the Kasbah marketplace, visit <a href="' + go('AGENTS') + '">agents</a>. If you want to, you can also <a href="' + go('PASSWD') + '">change your password</a>. Don’t forget that you can use the menu bar at the top of the page at any time to help you navigate. Here we will notify you if you have any messages and how many. We will also provide a link to the message page if you do have any messages:</font></p>' +
           (n ? '<p><b>You have ' + n + ' new message' + (n > 1 ? 's' : '') + '.</b> <a href="' + go('MESSAGES') + '">Read ' + (n > 1 ? 'them' : 'it') + '</a></p>' : '<p><font color="#444444">You have no new messages.</font></p>');
       }
@@ -212,48 +211,57 @@ function pages(st, req) {
       title: 'Kasbah Agent Control Strip',
       html: function () {
         function pop(k) { return select(k, FORM[k].map(function (o) { return [o, o]; }), DEFAULTS[k]); }
-        return nav('agents') + '<h2 align="center">Hi ' + USER + ', now you can create<br>your New Selling Agent.</h2><hr>' +
+        function line(html) { return '<nobr>' + html + '</nobr><br>' + spacer(1, 5) + '<br>'; }
+        return nav('agents') + '<h2 align="center">Hi ' + USER + ', now you can create your New Selling Agent.</h2><hr>' +
           '<form method="get" action="' + base + '/dispatch">' + hidden({ cmd: 'CREATE', id: st.agentNo + 1, n: req.n }) +
-          '<p><b>Fill out the form below to create a selling agent that will sell your <i>music</i> for you. Please enter all information as accurately as possible, so that your agent will be able to find matches for you more easily. Remember to click the "Create Agent" button at the bottom of the form when you’ve finished.</b></p>' +
-          '<p>Click to clear form: <input type="reset" value="Clear"></p>' +
-          '<p><i>Description of Music to sell:</i></p>' +
-          '<p>I am trying to sell the following: ' + pop('kind') + '</p>' +
-          '<p>Genre: ' + pop('genre') + '</p>' +
-          '<p>Title:<br><input type="text" name="title" size="40" maxlength="60"></p>' +
-          '<p>Artist:<br><input type="text" name="artist" size="40" maxlength="60"></p>' +
-          '<p>Condition: ' + pop('condition') + '</p>' +
-          '<p>Description<br>(Enter anything which you think might help your agent find matches):<br><textarea name="desc" rows="5" cols="44" wrap="virtual"></textarea></p>' +
-          '<p>' + spacer(1, 6) + '<br><i>Instructions for your Selling Agent:</i></p>' +
-          '<p>Deadline: sell it within ' + pop('days') + '</p>' +
-          '<p>Start price: $ <input type="text" name="start" size="7" maxlength="8"> &nbsp; Min. price: $ <input type="text" name="min" size="7" maxlength="8"></p>' +
-          '<p>Strategy: ' + pop('strategy') + '</p>' +
-          '<p>Location: ' + pop('location') + '</p>' +
-          '<p>Level of Autonomy: ' + pop('autonomy') + '</p>' +
-          '<p>Reporting Method: ' + pop('reporting') + '</p>' +
-          '<p>' + spacer(1, 4) + '<br><input type="submit" value="Create Agent"></p></form>';
+          '<p><b>Fill out the form below to create a selling agent that will sell your <i>music</i> for you. Please enter all information as accurately as possible, so that your agent will be able to find matches for you more easily. Remember to click the "Create Agent" button at the bottom of the form when you\u2019ve finished.</b></p>' +
+          '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td valign="top" width="330">' +
+          line('<i>Description of Music to sell:</i>') +
+          line('I am trying to sell the following: ' + pop('kind')) +
+          line('Genre: ' + pop('genre')) +
+          line('Title: <input type="text" name="title" size="26" maxlength="60">') +
+          line('Artist: <input type="text" name="artist" size="25" maxlength="60">') +
+          line('Condition: ' + pop('condition')) +
+          'Description<br>(Enter anything which you think might help your agent find matches):<br><textarea name="desc" rows="3" cols="32" wrap="virtual"></textarea>' +
+          '</td><td width="20">' + spacer(20, 1) + '</td><td valign="top">' +
+          line('Click to clear form: <input type="reset" value="Clear">') +
+          line('<i>Instructions for your Selling Agent:</i>') +
+          line('Deadline: sell it within ' + pop('days')) +
+          line('Start price: $ <input type="text" name="start" size="6" maxlength="8"> &nbsp; Min. price: $ <input type="text" name="min" size="6" maxlength="8">') +
+          line('Strategy: ' + pop('strategy')) +
+          line('Location: ' + pop('location')) +
+          line('Level of Autonomy: ' + pop('autonomy')) +
+          line('Reporting Method: ' + pop('reporting')) +
+          '<input type="submit" value="Create Agent"></td></tr></table></form>';
       }
     },
     agent: {
       title: 'Kasbah Agent Control Strip',
-      html: function (id) {
+      html: function (id, all) {
         var a = agentById(st, id);
         if (!a) return nav('agents') + '<p>No such agent.</p>';
+        function item(k, v) { return '&#183;&nbsp; ' + k + ': <u>' + v + '</u><br>'; }
         var h = nav('agents') + '<h2 align="center">Your Selling Agent, No. ' + a.id + '</h2><hr>' +
-          '<p class="sell">Sell: <font color="#b5651d">' + itemName(a) + '</font></p><ul>' +
-          '<li>Deadline: <u>' + longDate(a.born + a.days) + '</u><li>Start price: <u>' + money(a.start) + '</u><li>Min. price: <u>' + money(a.min) + '</u>' +
-          '<li>Strategy: <u>' + a.strategy + '</u><li>Location: <u>' + a.location + '</u><li>Level of Autonomy: <u>' + a.autonomy + '</u>' +
-          '<li>Reporting Method: <u>' + a.reporting + '</u></ul><hr>';
+          '<p class="sell">Sell: <font color="#b5651d">' + itemName(a) + '</font></p>' +
+          '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td valign="top" nowrap>' +
+          item('Deadline', longDate(a.born + a.days)) + item('Start price', money(a.start)) + item('Min. price', money(a.min)) +
+          '</td><td width="14">' + spacer(14, 1) + '</td><td valign="top" nowrap>' + item('Strategy', a.strategy) + item('Location', a.location) +
+          '</td><td width="14">' + spacer(14, 1) + '</td><td valign="top" nowrap>' + item('Level of Autonomy', a.autonomy) + item('Reporting Method', a.reporting) +
+          '</td></tr></table><hr>';
         if (a.status === 'awaiting') {
-          h += '<table border="0" cellspacing="0" cellpadding="2" width="100%" bgcolor="#000000"><tr><td><table border="0" cellspacing="0" cellpadding="8" width="100%" bgcolor="#ffffff"><tr><td>' +
-            '<p><b>Your agent needs you.</b> Agent ' + a.deal.buyer.no + ' (owner: ' + a.deal.buyer.owner + ') will pay <b>' + money(a.deal.price) +
-            '</b>. Your asking price started at ' + money(a.start) + ' and your minimum is ' + money(a.min) + '.</p>' + decide(a) + '</td></tr></table></td></tr></table><br>';
+          h += '<table border="0" cellspacing="0" cellpadding="2" width="100%" bgcolor="#000000"><tr><td><table border="0" cellspacing="0" cellpadding="6" width="100%" bgcolor="#ffffff"><tr><td>' +
+            '<b>Your agent needs you.</b> Agent ' + a.deal.buyer.no + ' (owner: ' + a.deal.buyer.owner + ') will pay <b>' + money(a.deal.price) +
+            '</b>. Your asking price started at ' + money(a.start) + ' and your minimum is ' + money(a.min) + '.<br>' + spacer(1, 6) + '<br>' + decide(a) + '</td></tr></table></td></tr></table>';
+        } else {
+          h += '<table border="0" cellspacing="0" cellpadding="5" width="100%" bgcolor="#f0efe2"><tr><td><b>Status:</b> ' + statusText(a) + '</td></tr></table>';
         }
-        h += '<table border="0" cellspacing="0" cellpadding="6" width="100%" bgcolor="#f0efe2"><tr><td><b>Status:</b> ' + statusText(a) + '</td></tr></table>' +
-          '<h3>What your agent has been doing</h3><table border="0" cellspacing="0" cellpadding="2" width="100%">';
-        a.log.slice().reverse().forEach(function (l) {
+        h += '<h3>What your agent has been doing</h3><table border="0" cellspacing="0" cellpadding="1" width="100%">';
+        var log = a.log.slice().reverse(), keep = all ? log.length : a.status === 'awaiting' ? 3 : 5;
+        log.slice(0, keep).forEach(function (l) {
           h += '<tr><td valign="top" nowrap width="46"><font color="#555555">' + shortDate(l.day) + '</font></td><td valign="top">' + (l.hot ? '<b>' + l.text + '</b>' : l.text) + '</td></tr>';
         });
         h += '</table>';
+        if (log.length > keep) h += '<p><a href="' + go('AGENT') + '+' + a.id + '+ALL">The ' + (log.length - keep) + ' earlier entries</a></p>';
         if (a.status === 'sold' || a.status === 'expired') h += '<p><a href="' + go('NEW_SELL_AGENT') + '">Create another selling agent</a></p>';
         return h;
       }
@@ -311,12 +319,14 @@ const VIEWS = { WELCOME: 'home', NEW_SELL_AGENT: 'newsell', AGENT: 'agent', MESS
 
 const css =
   '.kb p, .kb td, .kb th, .kb li { font-family: Palatino, "Book Antiqua", Times, serif; font-size: 13px; line-height: 16px; }\n' +
-  '.kb h2 { font-family: Palatino, Times, serif; font-size: 19px; line-height: 23px; font-weight: bold; text-align: center; }\n' +
-  '.kb h3 { font-family: Palatino, Times, serif; font-size: 15px; line-height: 19px; font-weight: bold; }\n' +
+  '.kb p { margin-top: 0px; margin-bottom: 8px; }\n' +
+  '.kb hr { margin-top: 4px; margin-bottom: 8px; }\n' +
+  '.kb h2 { font-family: Palatino, Times, serif; font-size: 19px; line-height: 23px; font-weight: bold; text-align: center; margin-top: 4px; margin-bottom: 4px; }\n' +
+  '.kb h3 { font-family: Palatino, Times, serif; font-size: 15px; line-height: 19px; font-weight: bold; margin-top: 10px; margin-bottom: 4px; }\n' +
   '.kb .sell { font-size: 16px; line-height: 21px; }\n';
 
 function respond(st, req) {
-  var now = req.now, q = req.q, view = 'home', id = null;
+  var now = req.now, q = req.q, view = 'home', id = null, all = false;
   advance(st, now);
 
   if (q.cmd === 'CREATE') {
@@ -331,19 +341,19 @@ function respond(st, req) {
   } else {
     var words = (req.raw || '').split('+');
     view = VIEWS[words[0]] || 'home';
-    if (view === 'agent') id = +words[2];
+    if (view === 'agent') { id = +words[2]; all = words[3] === 'ALL'; }
   }
 
   var P = pages(st, req)[view];
-  var html = P.html(id);
+  var html = P.html(id, all);
   var running = st.agents.some(function (a) { return a.status === 'active'; });
   // While an agent is bargaining, any page that shows it looks again by itself.
-  var refresh = running && view !== 'newsell' ? { secs: REFRESH_S, url: req.base + '/dispatch?' + ({ home: 'WELCOME', agent: 'AGENT', messages: 'MESSAGES', agents: 'AGENTS', password: 'PASSWD', logout: 'LOGOUT' }[view]) + '+' + USER + (view === 'agent' ? '+' + id : '') } : null;
+  var refresh = running && view !== 'newsell' ? { secs: REFRESH_S, url: req.base + '/dispatch?' + ({ home: 'WELCOME', agent: 'AGENT', messages: 'MESSAGES', agents: 'AGENTS', password: 'PASSWD', logout: 'LOGOUT' }[view]) + '+' + USER + (view === 'agent' ? '+' + id + (all ? '+ALL' : '') : '') } : null;
   return {
     title: P.title,
     body: { bgcolor: '#ffffff', text: '#000000', link: '#1a1ac8', vlink: '#8a4a86', alink: '#ff0000' },
     css: css, refresh: refresh,
-    html: '<center><table border="0" cellspacing="0" cellpadding="10" width="560" class="kb"><tr><td>' + html + '</td></tr></table></center>'
+    html: '<center><table border="0" cellspacing="0" cellpadding="8" width="660" class="kb"><tr><td>' + html + '</td></tr></table></center>'
   };
 }
 

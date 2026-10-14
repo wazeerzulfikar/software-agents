@@ -16,7 +16,6 @@ const { BASE, esc, img, spacer, hidden } = require('./lib');
 const label = {
   title: 'Remembrance agent',
   credit: 'Bradley Rhodes & Thad Starner, 1996',
-  about: 'The Remembrance Agent lives inside the Emacs text editor, watching what you write and quietly listing old e-mail and notes that relate to it, to be read or ignored as you please.',
   hint: 'Click at the end of the text, type a sentence or two and press <i>Return</i>. The bottom three lines change to match what you wrote. Click one of them to read it.'
 };
 
@@ -323,7 +322,7 @@ function respond(s, req) {
     title: doc ? 'emacs: *remem-document-output*' : 'emacs: wearables.paper',
     body: { bgcolor: '#413f92', text: '#000000', link: '#000000', vlink: '#000000', alink: '#000000' },
     css: css,
-    html: '<center>' + spacer(1, 6) + '<br>' + window_(s, req, doc) + '</center>'
+    html: '<center>' + spacer(1, 4) + '<br>' + window_(s, req, doc) + '</center>'
   };
 }
 

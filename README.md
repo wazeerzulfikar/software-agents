@@ -62,6 +62,7 @@ These browsers cannot run the modern version's JavaScript, so this version conta
 - **The Remembrance Agent looks again each time you press Return**, not after every keystroke. The line with the cursor is a text field; type at the end of it and press Return.
 - **Pages reload themselves** while something is happening on its own: Kasbah's agent bargaining, or Yenta finding an interest or getting a reply.
 - **A prototype returns to the start page** after 5 minutes on the same page.
+- **Every page fits a small browser window,** about 780 by 520 pixels, without scrolling. The label over each prototype is shorter, and Kasbah's form is in two columns.
 
 To run it, with Node 18 or later and nothing to install:
 

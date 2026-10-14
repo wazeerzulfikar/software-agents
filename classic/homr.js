@@ -9,7 +9,6 @@ const { BASE, esc, rng, img, spacer, select, hidden } = require('./lib');
 const label = {
   title: 'HOMR',
   credit: 'Upendra Shardanand, Max Metral & Pattie Maes, 1994-1996',
-  about: 'HOMR is a personal critic for music. It compares your ratings with everyone else’s, finds the people whose taste is most like yours, and tells you what they love that you have not heard yet. The page is from its later life as Firefly.',
   hint: 'Rate a few of these artists from the menus, press <i>Submit and Send More</i>, and see how the next five change. Click an artist, or <i>people</i>, to see why.'
 };
 
@@ -189,27 +188,31 @@ function page(s, base, n, view, arg) {
 
   var V = {
     recs: function () {
-      var h = masthead() + spacer(1, 12) +
-        heading('<a href="' + href('me') + '" class="plain">' + ME + '</a><b>, You should check out these artists.</b>') +
-        '<form method="get" action="' + href('recs') + '">' + hidden({ do: 'send', n: n }) +
-        '<table border="0" cellspacing="0" cellpadding="0" width="635"><tr><td width="71">' + spacer(71, 1) + '</td><td colspan="3"><font class="note">An asterisk indicates your current rating.</font></td></tr>' +
-        '<tr><td colspan="4">' + spacer(1, 18) + '</td></tr>';
+      // the figure's layout, with the spacing pulled in to fit a small window
+      var h = masthead() + spacer(1, 3) + '<br><form method="get" action="' + href('recs') + '">' + hidden({ do: 'send', n: n }) +
+        '<table border="0" cellspacing="0" cellpadding="0" width="635">' +
+        '<tr><td colspan="4">' + spacer(22, 1) + '<font size="5" class="h2f"><a href="' + href('me') + '" class="plain">' + ME + '</a><b>, You should check out these artists.</b></font></td></tr>' +
+        '<tr><td width="71">' + spacer(71, 1) + '</td><td colspan="3"><font class="note">An asterisk indicates your current rating.</font></td></tr>' +
+        '<tr><td colspan="4">' + spacer(1, 6) + '</td></tr>';
       s.current.forEach(function (c) {
         h += '<tr><td></td><td width="53">' + spacer(53, 1) + '</td><td valign="middle" nowrap>' + menu(s, c.a.id) + '&nbsp;&nbsp;&nbsp;</td>' +
           '<td valign="middle" width="100%"><font size="4" class="artist"><b>' + artistLink(c.a) + '</b></font></td></tr>' +
           '<tr><td></td><td></td><td colspan="2"><tt class="tt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + c.why + '</tt>' + icons(c.extras, c.order) + '</td></tr>' +
-          '<tr><td colspan="4">' + spacer(1, 16) + '</td></tr>';
+          '<tr><td colspan="4">' + spacer(1, 1) + '</td></tr>';
       });
-      return h + '<tr><td></td><td></td><td colspan="2"><input type="submit" value="Submit and Send More"></td></tr></table></form>' +
-        '<table border="0" cellspacing="0" cellpadding="0" width="635"><tr><td width="119">' + spacer(119, 1) + '</td><td>' + img('ff-dots.gif', 503, 1) + '</td></tr></table>' +
-        '<table border="0" cellspacing="0" cellpadding="0" width="635"><tr><td width="71">' + spacer(71, 1) + '</td><td width="180" valign="top">' + spacer(1, 18) + '<br>' + img('ff-spiral.gif', 102, 52) + '</td>' +
-        '<td valign="top">' + spacer(1, 32) + '<br><font class="tell">Tell <b>firefly</b></font><br><tt class="tt">what you’re looking for</tt></td></tr></table>';
+      return h +
+        '<tr><td></td><td></td><td colspan="2">' + img('ff-dots.gif', 503, 1) + '</td></tr>' +
+        '<tr><td colspan="4">' + spacer(1, 6) + '</td></tr>' +
+        '<tr><td></td><td></td><td valign="middle" nowrap><input type="submit" value="Submit and Send More">&nbsp;&nbsp;&nbsp;</td>' +
+        '<td valign="middle"><table border="0" cellspacing="0" cellpadding="0"><tr><td valign="middle">' + img('ff-spiral.gif', 102, 52) + '</td>' +
+        '<td width="10">' + spacer(10, 1) + '</td><td valign="middle" nowrap><font class="tell">Tell <b>firefly</b></font><br><tt class="tt">what you\u2019re looking for</tt></td></tr></table></td></tr>' +
+        '</table></form>';
     },
 
     artist: function (id) {
       var a = ARTISTS[id];
       if (!a) return V.recs();
-      var p = predictFor(s, a), h = masthead() + spacer(1, 12) + heading('<b>' + esc(a.name) + '</b>') + '<div class="body">';
+      var p = predictFor(s, a), h = masthead() + spacer(1, 4) + heading('<b>' + esc(a.name) + '</b>') + '<div class="body">';
       if (s.mine[id]) h += '<p class="lead">You gave ' + esc(a.name) + ' a ' + s.mine[id] + '.</p>';
       else if (p) h += '<p class="lead"><b>firefly</b> thinks you would give ' + esc(a.name) + ' a <b>' + p.p.toFixed(1) +
         '</b>. <tt class="tt">(confidence: ' + confidence(p.n) + ')</tt></p>';
@@ -239,14 +242,14 @@ function page(s, base, n, view, arg) {
     },
 
     people: function () {
-      var nb = neighbours(s).slice(0, 5), h = masthead('people') + spacer(1, 12) +
+      var nb = neighbours(s).slice(0, 5), h = masthead('people') + spacer(1, 4) +
         heading('<a href="' + href('me') + '" class="plain">' + ME + '</a><b>, You should meet these people.</b>') +
         '<div class="body"><p class="lead">Their taste in music is the closest to yours. <b>firefly</b> draws on what they love when it picks artists for you.</p>' +
         '<table border="0" cellspacing="0" cellpadding="1" class="list">';
       nb.forEach(function (x) {
         var raves = Object.keys(x.u.r).filter(function (k) { return x.u.r[k] === 7 && !s.mine[k]; }).slice(0, 2);
-        h += '<tr><td nowrap><font class="big"><a href="' + href('user/' + x.u.alias) + '">' + x.u.alias + '</a></font> &nbsp; &nbsp; </td><td><tt class="tt">' + Math.round(x.s * 100) + '% like you</tt></td></tr>' +
-          '<tr><td colspan="2">&nbsp; &nbsp; &nbsp;' + (raves.length ? 'raves about ' + raves.map(function (k) { return artistLink(ARTISTS[k]); }).join(' and ') : 'has rated the same things you have') + '<br>' + spacer(1, 8) + '</td></tr>';
+        h += '<tr><td nowrap valign="top"><font class="big"><a href="' + href('user/' + x.u.alias) + '">' + x.u.alias + '</a></font> &nbsp; &nbsp; </td><td nowrap valign="top"><tt class="tt">' + Math.round(x.s * 100) + '% like you</tt> &nbsp; &nbsp; </td>' +
+          '<td valign="top">' + (raves.length ? 'raves about ' + raves.map(function (k) { return artistLink(ARTISTS[k]); }).join(' and ') : 'has rated the same things you have') + '</td></tr>';
       });
       return h + '</table></div>' + back('recs', 'Back to your recommendations');
     },
@@ -254,7 +257,7 @@ function page(s, base, n, view, arg) {
     user: function (alias) {
       var u = USERS.filter(function (x) { return x.alias === alias; })[0];
       if (!u) return V.people();
-      var h = masthead('people') + spacer(1, 12) + heading('<b>' + alias + '</b>') + '<div class="body">';
+      var h = masthead('people') + spacer(1, 4) + heading('<b>' + alias + '</b>') + '<div class="body">';
       var both = Object.keys(u.r).filter(function (k) { return s.mine[k]; });
       var loves = Object.keys(u.r).filter(function (k) { return u.r[k] >= 6 && !s.mine[k]; }).slice(0, 8);
       h += '<p class="lead">You and ' + alias + ' have rated ' + both.length + ' of the same artists.</p><table border="0" cellspacing="0" cellpadding="1" class="list">';
@@ -270,16 +273,16 @@ function page(s, base, n, view, arg) {
       var rows = ARTISTS.map(function (a) {
         var sum = 0, cnt = 0; USERS.forEach(function (u) { if (u.r[a.id]) { sum += u.r[a.id]; cnt++; } });
         return { a: a, avg: cnt ? sum / cnt : 0, n: cnt };
-      }).filter(function (r) { return r.n >= 12; }).sort(function (x, y) { return y.avg - x.avg; }).slice(0, 12);
-      var h = masthead('buzz') + spacer(1, 12) + heading('<b>The buzz.</b>') + '<div class="body"><p class="lead">The artists <b>firefly</b> members rate most highly right now, whatever your own taste.</p><table border="0" cellspacing="0" cellpadding="1" class="list">';
+      }).filter(function (r) { return r.n >= 12; }).sort(function (x, y) { return y.avg - x.avg; }).slice(0, 10);
+      var h = masthead('buzz') + spacer(1, 4) + heading('<b>The buzz.</b>') + '<div class="body"><p class="lead">The artists <b>firefly</b> members rate most highly right now, whatever your own taste.</p><table border="0" cellspacing="0" cellpadding="1" class="list">';
       rows.forEach(function (r, i) {
-        h += '<tr><td align="right">' + (i + 1) + '. &nbsp;</td><td nowrap><b>' + artistLink(r.a) + '</b> &nbsp; &nbsp; </td><td nowrap><tt class="tt">' + r.avg.toFixed(1) + ' from ' + r.n + ' members</tt></td></tr>';
+        h += '<tr><td align="right">' + (i + 1) + '. &nbsp;</td><td nowrap>' + artistLink(r.a) + ' &nbsp; &nbsp; </td><td nowrap><tt class="tt">' + r.avg.toFixed(1) + ' from ' + r.n + ' members</tt></td></tr>';
       });
       return h + '</table></div>' + back('recs', 'Back to your recommendations');
     },
 
     welcome: function () {
-      return masthead('welcome') + spacer(1, 12) + heading('<b>Welcome to firefly.</b>') + '<div class="body">' +
+      return masthead('welcome') + spacer(1, 4) + heading('<b>Welcome to firefly.</b>') + '<div class="body">' +
         '<p class="lead">Tell <b>firefly</b> which music you love and which you can’t stand. It finds the members whose taste is most like yours and passes along what they are listening to, the way a friend would.</p>' +
         '<p class="lead">The more you rate, the better it knows you.</p>' +
         '<ul><li><a href="' + href('recs') + '">See the artists picked for you</a><li><a href="' + href('me') + '">See what firefly knows about you</a>' +
@@ -288,9 +291,9 @@ function page(s, base, n, view, arg) {
 
     me: function () {
       var ids = Object.keys(s.mine).sort(function (x, y) { return s.mine[y] - s.mine[x] || ARTISTS[x].name.localeCompare(ARTISTS[y].name); });
-      var h = masthead() + spacer(1, 12) + heading('<b>' + ME + ', this is what firefly knows about you.</b>') + '<div class="body">' +
+      var h = masthead() + spacer(1, 4) + heading('<b>' + ME + ', this is what firefly knows about you.</b>') + '<div class="body">' +
         '<p class="lead">You have rated ' + ids.length + ' artists. An asterisk indicates your current rating; change any of them from the artist’s page.</p>' +
-        '<table border="0" cellspacing="0" cellpadding="1" class="list">';
+        '<table border="0" cellspacing="0" cellpadding="0" class="list">';
       var half = Math.ceil(Math.min(ids.length, 34) / 2);
       for (var i = 0; i < half; i++) {
         h += '<tr>';
@@ -312,7 +315,7 @@ const css =
   '.ff a.here { color: #6f6f78; }\n' +
   '.ff a.plain { font-weight: normal; }\n' +
   '.ff .nav { font-family: Times, serif; font-size: 11px; line-height: 13px; }\n' +
-  '.ff .h2 { margin: 0px 0px 10px 22px; }\n' +
+  '.ff .h2 { margin: 6px 0px 6px 22px; }\n' +
   '.ff .h2f { font-family: Times, serif; font-size: 22px; line-height: 28px; }\n' +
   '.ff .note { font-size: 17px; }\n' +
   '.ff .artist { font-size: 21px; line-height: 26px; }\n' +
@@ -322,8 +325,10 @@ const css =
   '.ff .lead { margin-left: 27px; }\n' +
   '.ff .quote { margin-left: 27px; }\n' +
   '.ff .list { margin-left: 27px; }\n' +
-  '.ff .big { font-weight: bold; font-size: 21px; line-height: 26px; }\n' +
-  '.ff .foot { margin: 22px 0px 0px 44px; }\n';
+  '.ff .big { font-weight: bold; font-size: 19px; line-height: 23px; }\n' +
+  '.ff .list td { line-height: 18px; }\n' +
+  '.ff p { margin-top: 0px; margin-bottom: 8px; }\n' +
+  '.ff .foot { margin: 10px 0px 0px 44px; }\n';
 
 function respond(s, req) {
   var view = req.path[0] || 'recs', arg = req.path[1];
@@ -339,8 +344,8 @@ function respond(s, req) {
     title: 'firefly',
     body: { bgcolor: '#c7c3cf', text: '#000000', link: '#9a9a9c', vlink: '#9a9a9c', alink: '#6f6f78' },
     css: css,
-    html: '<center><table border="0" cellspacing="0" cellpadding="0" width="635" class="ff"><tr><td>' + spacer(1, 21) + '<br>' +
-      page(s, req.base, req.n, view, arg) + spacer(1, 24) + '</td></tr></table></center>'
+    html: '<center><table border="0" cellspacing="0" cellpadding="0" width="635" class="ff"><tr><td>' + spacer(1, 8) + '<br>' +
+      page(s, req.base, req.n, view, arg) + spacer(1, 8) + '</td></tr></table></center>'
   };
 }
 

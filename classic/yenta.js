@@ -12,7 +12,6 @@ const label = {
   title: 'Matchmaking: Yenta',
   red: true,
   credit: 'Leonard Foner, 1995-1999 / Yenta 0.7.0',
-  about: 'Yenta reads your mail and files to work out what you are interested in. Then, without any central server, it finds other people’s Yentas that share those interests, especially the rare ones, and introduces you.',
   hint: 'Tick <i>Start finding interests</i>, press <i>Make changes</i> and watch the doors. Then read your <i>messages</i> and reply.'
 };
 
@@ -209,7 +208,7 @@ function pages(S, req, now) {
       var h = '<h1>Special requests</h1><p>This page is a catch-all for a variety of commands that don’t naturally fit somewhere else.</p><dl>';
       REQUESTS.forEach(function (r, i) {
         var to = i ? href('request/' + i) : act('shutdown', { do: 'quit' });
-        h += '<dt><b><a href="' + to + '">' + r[0].replace(/\.$/, '') + (i ? '.' : '') + '</a>' + (i ? '' : '.') + '</b><dd>' + r[1] + '<br><br>';
+        h += '<dt><b><a href="' + to + '">' + r[0].replace(/\.$/, '') + (i ? '.' : '') + '</a>' + (i ? '' : '.') + '</b><dd>' + r[1];
       });
       return h + '</dl>';
     },
@@ -223,9 +222,9 @@ function pages(S, req, now) {
         '<b>Handle</b>: <input type="text" name="handle" size="20"><p><input type="submit" value="Look up"></p></form>';
     },
     tune: function () {
-      var h = '<h1>Tunable parameters</h1><p><b>Some of these parameters might be useful to change. However, the documentation on their values is <i>not</i> currently guaranteed complete in this release, so you should know what you are doing or you may inadvertently disable some part of your Yenta. Additional documentation on these will appear in a later release.</b></p>' +
+      var h = '<h1>Tunable parameters</h1><p><font size="1" class="tiny"><b>Some of these parameters might be useful to change. However, the documentation on their values is <i>not</i> currently guaranteed complete in this release, so you should know what you are doing or you may inadvertently disable some part of your Yenta. Additional documentation on these will appear in a later release.</b></font></p>' +
         form('tune', { do: 'tune' });
-      TUNE.forEach(function (t, i) { h += '<p><b>' + t[0] + '</b> &nbsp;=&nbsp; <input type="text" name="tune' + i + '" value="' + esc(S.tune[i]) + '" size="16"><br>' + t[2] + '</p>'; });
+      TUNE.forEach(function (t, i) { h += '<b>' + t[0] + '</b> &nbsp;=&nbsp; <input type="text" name="tune' + i + '" value="' + esc(S.tune[i]) + '" size="10" class="small"><br><font size="1" class="tiny">' + t[2] + '</font><br>' + spacer(1, 1) + '<br>'; });
       return h + '<input type="submit" value="Make changes"></form>';
     },
     help: function () {
@@ -315,9 +314,15 @@ function bookmark(S, k, path, name) {
 }
 
 const css =
-  '.yn p, .yn td, .yn th, .yn li, .yn dd, .yn dt { font-family: Times, "Times New Roman", serif; font-size: 14px; }\n' +
-  '.yn h1 { font-family: Times, serif; font-size: 24px; line-height: 28px; font-weight: bold; margin-top: 2px; margin-bottom: 10px; }\n' +
-  '.yn h2 { font-family: Times, serif; font-size: 19px; line-height: 22px; font-weight: bold; }\n' +
+  '.yn p, .yn td, .yn th, .yn li, .yn dd, .yn dt { font-family: Times, "Times New Roman", serif; font-size: 14px; line-height: 16px; }\n' +
+  '.yn p { margin-top: 0px; margin-bottom: 8px; }\n' +
+  '.yn h1 { font-family: Times, serif; font-size: 21px; line-height: 24px; font-weight: bold; margin-top: 0px; margin-bottom: 6px; }\n' +
+  '.yn h2 { font-family: Times, serif; font-size: 17px; line-height: 20px; font-weight: bold; margin-top: 8px; margin-bottom: 4px; }\n' +
+  '.yn ul { margin-top: 4px; margin-bottom: 8px; }\n' +
+  '.yn dd { margin-bottom: 6px; }\n' +
+  '.yn hr { margin-top: 4px; margin-bottom: 4px; }\n' +
+  '.yn .small { font-size: 12px; line-height: 14px; }\n' +
+  '.yn .tiny { font-size: 11px; line-height: 12px; }\n' +
   '.yn .bm { font-family: Geneva, Helvetica, sans-serif; font-size: 9px; }\n';
 
 function respond(S, req) {
@@ -379,7 +384,7 @@ function respond(S, req) {
     '<area shape="rect" coords="118,18,170,92" href="' + bm('reorder') + '" alt="reorder"></map>' +
     '<center><font class="bm" size="1">' + marks + '</font></center></td>' +
     '<td width="1" bgcolor="#000000">' + spacer(1, 1) + '</td>' +
-    '<td valign="top" width="560"><table border="0" cellspacing="0" cellpadding="10" width="560"><tr><td>' + main + '</td></tr></table></td></tr></table>';
+    '<td valign="top" width="560"><table border="0" cellspacing="0" cellpadding="7" width="560"><tr><td>' + main + '</td></tr></table></td></tr></table>';
 
   // While something is due, the page looks again by itself, except where the
   // visitor may be in the middle of typing.

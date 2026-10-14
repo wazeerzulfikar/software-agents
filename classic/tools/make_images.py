@@ -172,7 +172,7 @@ def yenta():
 
 def kasbah():
     w = Image.open(src('assets', 'kasbah', 'welcome.png'))
-    jpg(w.resize((240, round(240 * w.height / w.width)), Image.LANCZOS), 'kb-welcome.jpg')
+    jpg(w.resize((170, round(170 * w.height / w.width)), Image.LANCZOS), 'kb-welcome.jpg', 90)
 
     # The menu bar is drawn by css/kasbah.css; render it once in each state.
     here = ['home', 'messages', 'agents', 'logout', 'none']
