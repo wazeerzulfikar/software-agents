@@ -21,3 +21,7 @@ Desktop.ini
 # Scratch files
 *.log
 *.tmp
+
+# Local screenshots of the exhibit (only the start page is kept, for the README)
+screenshots/*
+!screenshots/index.png
