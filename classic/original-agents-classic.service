@@ -1,0 +1,15 @@
+# systemd unit for the 1990s-browser version, on the exhibit's server.
+#   sudo cp /srv/original-agents/classic/original-agents-classic.service /etc/systemd/system/
+#   sudo systemctl enable --now original-agents-classic
+[Unit]
+Description=The Original Agents, for 1990s browsers
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /srv/original-agents/classic/server.js
+Environment=PORT=8040 HOST=127.0.0.1
+DynamicUser=yes
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

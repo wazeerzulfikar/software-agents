@@ -53,6 +53,49 @@ Every page is laid out on a 1920×1080 stage that scales to fit the window, so i
 | `?idle=30` | Sets the idle timeout in seconds (minimum 20), for testing it. |
 | `?thumb` | Renders a prototype as the live preview used on the start page. |
 
+## On Mac OS 9 and other 1990s browsers
+
+The exhibit above needs a modern browser. The `classic/` folder holds a second version of all four prototypes for the browsers of the time: Internet Explorer 5 and Netscape 4 on Mac OS 9, iCab, Classilla, and older browsers back to Netscape 3. It is tested in Netscape Navigator 4 and Internet Explorer 4 for the Mac, on [oldweb.today](https://oldweb.today/).
+
+These browsers cannot run the modern version's JavaScript, so this version contains none. A small Node program does the work on the server, as HOMR, Kasbah and Yenta originally did, and sends plain HTML 3.2 pages with GIF and JPEG images. The agents themselves are the same: Ringo's correlation, the Remembrance Agent's three-scope retrieval, Kasbah's price decay and Yenta's interests and introductions. The page is drawn by the visitor's own period browser, so HOMR's and Kasbah's menus are real Mac OS pop-up menus, and Yenta looks as it did in Netscape on a Mac. The differences from the modern version:
+
+- **The Remembrance Agent looks again each time you press Return**, not after every keystroke. The line with the cursor is a text field; type at the end of it and press Return.
+- **Pages reload themselves** while something is happening on its own: Kasbah's agent bargaining, or Yenta finding an interest or getting a reply.
+- **A prototype returns to the start page** after 5 minutes on the same page.
+
+To run it, with Node 18 or later and nothing to install:
+
+```
+node classic/server.js
+```
+
+Then open `http://localhost:8040/classic/`. Each visitor gets a short id in the address. Their state is kept on the server for three hours, and forms use GET.
+
+On the exhibit's server, `classic/original-agents-classic.service` runs it under systemd, and Caddy passes `/classic` to it. The OS 9 browsers cannot use modern HTTPS, so this part must stay on plain HTTP. When the domain is added, keep an `http://` site for it or keep using the IP address. The optional `@old` lines send period browsers that open the bare address straight to `/classic/`:
+
+```
+:80 {
+	@old {
+		path /
+		header_regexp User-Agent "Mozilla/[1-4]\.|MSIE [2-6]\.|PPC|iCab|Classilla"
+	}
+	redir @old /classic/
+	handle /classic* {
+		reverse_proxy 127.0.0.1:8040
+	}
+	handle {
+		root * /srv/original-agents
+		encode gzip
+		header Cache-Control "no-cache"
+		file_server {
+			hide .git .gitignore
+		}
+	}
+}
+```
+
+The images in `classic/img/` are made from `assets/` and the start-page screenshot by `python3 classic/tools/make_images.py` (Pillow, and Chrome for Kasbah's menu bar).
+
 ## How it is made
 
 - **Fidelity.** Layouts, colours and type are measured from the original figures and screenshots, not reconstructed from memory. Where the original artwork survives in a figure (the Firefly banner, Yenta's collage, Kasbah's welcome image), it is cut out and reused. Everything else is redrawn in HTML and CSS at the original screen size and enlarged.
@@ -73,6 +116,8 @@ css/                shell.css (shared) and one stylesheet per prototype
 js/                 shell.js (scaling, navigation, idle reset) and one script per prototype
                     ra-corpus.js   the Remembrance Agent's e-mail and notes
                     xfonts.js      X11 misc-fixed bitmap fonts
+classic/            the version for 1990s browsers: server.js and one module per prototype,
+                    img/ (GIF and JPEG), tools/make_images.py, and a systemd unit
 assets/             images cut from the original figures, and the period fonts
 references/         the papers the prototypes are based on
 screenshots/        the start page image above (other screenshots stay local)
