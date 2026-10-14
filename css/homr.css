@@ -1,0 +1,108 @@
+/* HOMR in its later life as Firefly, in Netscape on an X11 workstation
+   (Motif widgets).
+   Everything inside .ff is laid out in original screen pixels; the slide
+   enlarges it with zoom. Measurements are taken from the 1997 figure. */
+
+.ff {
+  left: 120px;
+  top: 58px;
+  width: 635px;
+  height: 695px;
+  zoom: 1.4;
+  background: #c7c3cf;
+  overflow: hidden;
+  font-family: Times, "Times New Roman", serif;
+  color: #000;
+  -webkit-font-smoothing: auto;
+}
+.ff .page { position: absolute; inset: 0; }
+.ff a { color: #9a9a9c; text-decoration: underline; cursor: pointer; }
+.ff a:hover { color: #6f6f78; }
+.ff tt, .ff .tt { font: 13px/16px "Andale Mono", "Monaco", monospace; letter-spacing: -0.6px; color: #1a1a1a; }
+
+/* masthead */
+.ff .banner { position: absolute; left: 39px; top: 21px; width: 557px; height: 77px; display: block; }
+.ff .banner-map a { position: absolute; top: 21px; height: 77px; }
+.ff .nav {
+  position: absolute; left: 0; right: 0; top: 99px; text-align: center;
+  font: bold 11px/13px Times, serif; letter-spacing: 3px; color: #000; white-space: nowrap;
+}
+.ff .nav span { margin: 0 10px; }
+.ff .nav a { font-weight: bold; }
+.ff .nav a.here { color: #6f6f78; }
+
+/* recommendation page */
+.ff h2 { position: absolute; left: 22px; top: 127px; margin: 0; font: bold 22px/28px Times, serif; white-space: nowrap; }
+.ff h2 a { font-weight: normal; }
+.ff .note { position: absolute; left: 71px; top: 174px; font: 17px/22px Times, serif; white-space: nowrap; }
+.ff .row { position: absolute; left: 0; right: 0; height: 69px; }
+.ff .row .motif-opt { position: absolute; left: 124px; top: 0; }
+.ff .row .artist { position: absolute; left: 353px; top: 2px; font: bold 21px/26px Times, serif; white-space: nowrap; }
+.ff .row .why { position: absolute; left: 172px; top: 40px; white-space: nowrap; }
+.ff .ico { display: inline-block; width: 16px; height: 11px; margin-left: 3px; vertical-align: -1px; image-rendering: pixelated; }
+.ff .send { position: absolute; left: 170px; top: 570px; }
+.ff .dots { position: absolute; left: 119px; top: 618px; width: 503px; border-top: 1px dotted #4a4a52; }
+.ff .spiral { position: absolute; left: 71px; top: 639px; width: 102px; }
+.ff .tell { position: absolute; left: 251px; top: 655px; font: 17px/18px Times, serif; white-space: nowrap; }
+.ff .tell .tt { display: block; }
+
+/* Motif option menu */
+.motif-opt {
+  display: inline-block; position: relative; width: 213px; height: 31px; padding: 0 30px 0 8px;
+  background: #c7c3cf;
+  border: 2px solid; border-color: #fff #000 #000 #fff;
+  box-shadow: 1px 1px 0 #000;
+  font: 500 15px/27px "Helvetica Neue", Helvetica, Arial, sans-serif; color: #000;
+  text-align: center; white-space: nowrap; overflow: hidden; cursor: default;
+}
+.motif-opt::after {
+  content: ""; position: absolute; right: 9px; top: 9px; width: 12px; height: 6px;
+  background: #c7c3cf; border: 1px solid; border-color: #fff #3c3c44 #3c3c44 #fff;
+  box-shadow: 1px 1px 0 #000;
+}
+.motif-opt.open { border-color: #000 #fff #fff #000; box-shadow: none; }
+
+.motif-menu {
+  position: absolute; z-index: 20; background: #c7c3cf; padding: 2px 0;
+  border: 2px solid; border-color: #fff #000 #000 #fff; box-shadow: 1px 1px 0 #000;
+  font: 500 15px/23px "Helvetica Neue", Helvetica, Arial, sans-serif; color: #000; white-space: nowrap;
+}
+.motif-menu div { padding: 1px 16px 1px 12px; margin: 0 2px; border: 2px solid transparent; cursor: default; }
+.motif-menu div:hover, .motif-menu div.armed { border-color: #fff #000 #000 #fff; }
+
+/* Motif push button, drawn as the default button of the form */
+.motif-btn {
+  display: inline-block; padding: 3px; background: #c7c3cf;
+  border: 1px solid; border-color: #8a8792 #fff #fff #8a8792;
+  cursor: default;
+}
+.motif-btn span {
+  display: block; padding: 0 5px; height: 27px;
+  border: 2px solid; border-color: #fff #000 #000 #fff;
+  font: bold 15px/23px "Helvetica Neue", Helvetica, Arial, sans-serif; color: #000; white-space: nowrap;
+}
+.motif-btn:active span { border-color: #000 #fff #fff #000; }
+
+/* secondary pages share the masthead and a plain text column */
+.ff .body { position: absolute; left: 44px; right: 44px; top: 174px; font: 17px/22px Times, serif; }
+.ff .body p { margin: 0 0 13px; }
+.ff .body .lead { margin-left: 27px; }
+.ff .body ul { margin: 0 0 13px; padding-left: 44px; }
+.ff .body li { margin-bottom: 3px; }
+.ff .body .big { font: bold 21px/26px Times, serif; }
+.ff .body .quote { margin: 0 0 9px 27px; font-style: italic; }
+.ff .body .quote .tt { font-style: normal; margin-left: 6px; }
+.ff .body .rate { display: flex; align-items: center; gap: 14px; margin: 4px 0 16px 27px; }
+.ff .body table { border-collapse: collapse; margin: 0 0 12px 27px; }
+.ff .body td { padding: 1px 16px 1px 0; vertical-align: baseline; white-space: nowrap; }
+.ff .body td.n { text-align: right; padding-right: 10px; }
+.ff .foot { position: absolute; left: 44px; bottom: 22px; font: 17px/22px Times, serif; }
+
+/* ---------- the slide around it ---------- */
+.ff-side { left: 1092px; top: 248px; width: 764px; }
+.ff-side .t1 { font: 400 68px/86px Helvetica, Arial, sans-serif; color: var(--yellow); letter-spacing: -0.01em; }
+.ff-side .t2 { font: 400 68px/86px Helvetica, Arial, sans-serif; color: #fff; letter-spacing: -0.01em; margin-top: 86px; }
+.ff-about { left: 1096px; top: 660px; width: 720px; }
+.ff-credit { left: 1096px; top: 606px; }
+.ff-hint { left: 1096px; top: 880px; width: 720px; white-space: normal; }
+.ff-hint .label { display: block; margin-bottom: 8px; }

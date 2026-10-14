@@ -1,0 +1,175 @@
+/* The Original Agents — shared page shell.
+   Every screen is a 1920x1080 stage in the deep indigo of the 1997 talk
+   slides; shell.js scales it to fit whatever monitor it is shown on. */
+
+@font-face { font-family: "ChicagoFLF"; src: url("../assets/fonts/ChicagoFLF.woff2") format("woff2"); }
+@font-face { font-family: "Monaco9"; src: url("../assets/fonts/monaco.woff2") format("woff2"); }
+
+:root {
+  --indigo: #413f92;
+  --indigo-deep: #2f2d76;
+  --yellow: #e8e72e;
+  --red: #e44627;
+  --paper: #ffffff;
+  --lilac: #b9b7ea;
+  --serif: "Times New Roman", Times, serif;
+  --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--indigo);
+  overflow: hidden;
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+#stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: 0 0;
+  overflow: hidden;
+  z-index: 1;
+  visibility: hidden; /* shown by shell.js once scaled */
+}
+
+/* A projected 35mm slide is never perfectly flat: faint falloff and grain.
+   Both cover the whole window, so a screen that is not 16:9 shows no seam. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 75% 70% at 50% 46%, rgba(255, 255, 255, 0.055), rgba(0, 0, 0, 0) 60%),
+    radial-gradient(ellipse 120% 110% at 50% 50%, rgba(0, 0, 0, 0) 55%, rgba(14, 12, 60, 0.42) 100%);
+  pointer-events: none;
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.5 0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+#stage > * { position: absolute; }
+
+/* ---------- deck furniture ---------- */
+
+.deck-back,
+.deck-count {
+  top: 30px;
+  font: 500 15px/20px var(--sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lilac);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.deck-back { left: 64px; padding: 6px 0; cursor: pointer; transition: color 0.15s; }
+.deck-back .arrow { display: inline-block; margin-right: 12px; transition: transform 0.15s; }
+.deck-back:hover { color: var(--yellow); }
+.deck-back:hover .arrow { transform: translateX(-5px); }
+
+.deck-count { right: 64px; padding: 6px 0; display: flex; gap: 22px; align-items: center; }
+.deck-count a { color: var(--lilac); text-decoration: none; cursor: pointer; padding: 0 4px; transition: color 0.15s; }
+.deck-count a:hover { color: var(--yellow); }
+.deck-count .n { color: #fff; }
+.deck-count .again { margin-right: 26px; }
+
+.page-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 80px;
+  line-height: 1;
+  color: var(--yellow);
+  margin: 0;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
+}
+.page-title.red { color: var(--red); }
+
+.page-about {
+  font: 400 25px/33px var(--serif);
+  color: #fff;
+  margin: 0;
+}
+.page-about em { font-style: italic; color: var(--yellow); }
+
+.page-credit {
+  font: 500 13px/18px var(--sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lilac);
+  white-space: nowrap;
+}
+
+.page-hint {
+  font: 400 21px/28px var(--serif);
+  color: #fff;
+  white-space: nowrap;
+}
+.page-hint .label {
+  font: 500 13px/18px var(--sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-right: 18px;
+  vertical-align: 2px;
+}
+.page-hint kbd {
+  font: 400 15px/1 "Monaco", "Courier New", monospace;
+  color: var(--indigo-deep);
+  background: #fff;
+  border-radius: 3px;
+  padding: 3px 7px 2px;
+  margin: 0 2px;
+  vertical-align: 2px;
+}
+.page-hint .sep { color: var(--lilac); margin: 0 14px; }
+
+/* The recreated screen sits on the page like the pasted screenshot did on the slide. */
+.screen {
+  box-shadow: 0 0 0 1px rgba(10, 8, 50, 0.55), 0 18px 50px rgba(10, 8, 50, 0.45);
+}
+
+/* ---------- thumbnail mode (live previews on the start page) ---------- */
+html.thumb .deck-back,
+html.thumb .deck-count,
+html.thumb .page-hint,
+html.thumb .page-credit,
+html.thumb .page-about { display: none; }
+html.thumb, html.thumb body { pointer-events: none; }
+
+/* ---------- idle veil ---------- */
+#idle-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 20px;
+  pointer-events: none;
+}
+#idle-veil.on { display: flex; }
+#idle-veil span {
+  font: 500 13px/18px var(--sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--indigo-deep);
+  background: var(--yellow);
+  padding: 8px 18px;
+  border-radius: 2px;
+}
