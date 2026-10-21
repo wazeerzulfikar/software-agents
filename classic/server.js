@@ -7,7 +7,8 @@
    Explorer 5 and Netscape 4 for the Mac, iCab, Classilla) cannot run it, so
    this version does the work on the server, as HOMR, Yenta and Kasbah
    originally did, and sends plain HTML 3.2 pages with GIF and JPEG images.
-   No page contains any JavaScript.
+   No page needs JavaScript. The screensaver alone carries a few lines of it,
+   so that moving the mouse ends it; a click does the same without.
 
    Each visitor's state lives on the server, keyed by a short id in the URL
    (old browsers, and the oldweb.today proxy, cannot be relied on for
@@ -24,7 +25,8 @@ const { BASE, esc, ascii, img, spacer } = require('./lib');
 
 const PORT = +process.env.PORT || 8040;
 const HOST = process.env.HOST || '127.0.0.1';
-const IDLE = process.env.IDLE === undefined ? 300 : +process.env.IDLE;   // seconds untouched before a prototype returns to the start; 0 = never
+const IDLE = process.env.IDLE === undefined ? 300 : +process.env.IDLE;   // seconds untouched before a prototype gives way to the screensaver (or the start, without one); 0 = never
+const SCREENSAVER = process.env.SCREENSAVER === undefined ? 60 : +process.env.SCREENSAVER;   // seconds on the start page before the screensaver; 0 = never
 const SESSION_TTL = 3 * 3600 * 1000;
 const MAX_SESSIONS = 5000;
 
@@ -106,7 +108,7 @@ function document_(req, o) {
   var b = o.body || {};
   var meta = '';
   if (o.refresh) meta = '<meta http-equiv="refresh" content="' + o.refresh.secs + ';URL=' + absolute(req, o.refresh.url) + '">\n';
-  else if (o.idle && IDLE > 0) meta = '<meta http-equiv="refresh" content="' + IDLE + ';URL=' + absolute(req, BASE + '/') + '">\n';
+  else if (o.idle && IDLE > 0) meta = '<meta http-equiv="refresh" content="' + IDLE + ';URL=' + absolute(req, BASE + (SCREENSAVER > 0 ? '/demo' : '/')) + '">\n';
   return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n<html>\n<head>\n<title>' + esc(o.title) + '</title>\n' + meta +
     '<style type="text/css">\n<!--\n' + SHELL_CSS + (o.css || '') + '-->\n</style>\n</head>\n' +
     '<body bgcolor="' + (b.bgcolor || C.indigo) + '" text="' + (b.text || '#ffffff') + '" link="' + (b.link || C.yellow) + '" vlink="' + (b.vlink || C.yellow) + '" alink="' + (b.alink || '#ffffff') + '"' +
@@ -138,15 +140,16 @@ const MUSIC_URL = BASE + '/sound/agents.mp3';
 function music(on) {
   var state = on ? 'on' : 'off';
   var label = on ? 'Music on: click to turn it off' : 'Music off: click to turn it on';
-  var html = '<a class="band" href="' + BASE + '/?music=' + (on ? 'off' : 'on') + '" title="' + label + '">' +
-    '<img src="' + BASE + '/img/music-' + state + '.gif" srcset="' + BASE + '/img/music-' + state + '@4x.png 4x" width="20" height="18" border="0" alt="' + label + '" class="note"></a>';
-  if (on) {
-    html += '<audio src="' + MUSIC_URL + '" autoplay loop>' +
-      '<embed src="' + MUSIC_URL + '" type="audio/mpeg" width="2" height="2" autoplay="true" autostart="true" loop="true" controller="false" volume="80" bgcolor="#413f92">' +
-      '<noembed><bgsound src="' + MUSIC_URL + '" loop="infinite"></noembed></audio>';
-  }
-  return html;
+  return '<a class="band" href="' + BASE + '/?music=' + (on ? 'off' : 'on') + '" title="' + label + '">' +
+    '<img src="' + BASE + '/img/music-' + state + '.gif" srcset="' + BASE + '/img/music-' + state + '@4x.png 4x" width="20" height="18" border="0" alt="' + label + '" class="note"></a>' +
+    sound(on);
 }
+function sound(on) {
+  return on ? '<audio src="' + MUSIC_URL + '" autoplay loop>' +
+    '<embed src="' + MUSIC_URL + '" type="audio/mpeg" width="2" height="2" autoplay="true" autostart="true" loop="true" controller="false" volume="80" bgcolor="#413f92">' +
+    '<noembed><bgsound src="' + MUSIC_URL + '" loop="infinite"></noembed></audio>' : '';
+}
+function musicOn(req) { return !/(^|;\s*)music=off/.test(req.headers.cookie || ''); }
 
 /* The start page is drawn for a window of about 780 by 560, the size of the
    Mac OS 9 machine's. A modern browser in a larger window enlarges it to
@@ -181,7 +184,7 @@ function startPage(req, on) {
   var top =
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
     '<td valign="middle">' + spacer(1, 8) + '<br>' + cap('MIT MEDIA LAB &nbsp;/&nbsp; SOFTWARE AGENTS GROUP &nbsp;/&nbsp; 1994 - 1999') + '</td>' +
-    '<td valign="bottom" align="right" nowrap>' + music(on) + '</td></tr></table>' +
+    '<td valign="bottom" align="right" nowrap>' + saver() + spacer(12, 1) + music(on) + '</td></tr></table>' +
     spacer(1, 4) + '<br><font face="Times" size="7" class="big" color="' + C.yellow + '">The First Signs of Agents</font><br>' + spacer(1, 10) + '<br>' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
     '<td valign="top" width="50%"><font face="Times" size="4" class="lede" color="#ffffff">Four software agents from Pattie Maes’s group, recreated as working prototypes. You can choose one below and use it.</font></td>' +
@@ -198,7 +201,57 @@ function startPage(req, on) {
     '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%"><tr><td width="22">' + spacer(22, 1) + '</td>' +
     '<td valign="middle">' + top + spacer(1, 12) + '<br>' + middle + spacer(1, 12) + '<br>' + bottom + '</td>' +
     '<td width="22">' + spacer(22, 1) + '</td></tr></table>';
-  return document_(req, { title: 'The First Signs of Agents', css: css, html: html });
+  return document_(req, {
+    title: 'The First Signs of Agents', css: css, html: html,
+    refresh: SCREENSAVER > 0 ? { secs: SCREENSAVER, url: BASE + '/demo' } : null
+  });
+}
+
+/* The screensaver, shown when the exhibit has been left alone: a visit to
+   the four prototypes, recorded in Netscape 4 on a Mac and played back as one
+   animated GIF (classic/tools/make_screensaver.py), so the browser needs
+   nothing more than images to show it.
+
+   Moving the mouse ends it. That takes the only script in this version,
+   written for the JavaScript of Netscape 3 and 4 and Internet Explorer 4 and
+   5. Without it, a click anywhere on the picture or the line under it ends
+   the screensaver just the same. */
+const WAKE =
+  '<script language="JavaScript"><!--\n' +
+  'var x0 = -1, y0 = 0, t0 = new Date().getTime();\n' +
+  'function wake() { location.href = "' + BASE + '/"; return true; }\n' +
+  'function moved(e) {\n' +
+  '  if (!e) e = window.event;\n' +
+  '  if (!e || new Date().getTime() - t0 < 1500) return true;\n' +
+  '  if (x0 < 0) { x0 = e.screenX; y0 = e.screenY; return true; }\n' +
+  '  if (Math.abs(e.screenX - x0) + Math.abs(e.screenY - y0) > 6) wake();\n' +
+  '  return true;\n' +
+  '}\n' +
+  'if (document.layers) document.captureEvents(Event.MOUSEMOVE | Event.MOUSEDOWN | Event.KEYDOWN);\n' +
+  'document.onmousemove = moved; document.onmousedown = wake; document.onkeydown = wake;\n' +
+  '//--></script>';
+
+// beside the music note on the start page: start the screensaver now
+function saver() {
+  var label = 'Start the screensaver';
+  return '<a class="band" href="' + BASE + '/demo" title="' + label + '">' +
+    '<img src="' + BASE + '/img/saver.gif" srcset="' + BASE + '/img/saver@4x.png 4x" width="20" height="18" border="0" alt="' + label + '" class="note"></a>';
+}
+
+function demoPage(req, on) {
+  var css =
+    '.wake { font-family: Times, "Times New Roman", serif; font-size: 23px; line-height: 26px; }\n' +
+    ZOOM;
+  var back = BASE + '/';
+  // the recording, and under it, on a yellow bar the width of the recording, what to do
+  var html =
+    '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td align="center">' +
+    '<table border="0" cellspacing="0" cellpadding="0" width="766">' +
+    '<tr><td><a href="' + back + '">' + img('screensaver.gif', 766, 520, 'alt="The four prototypes in use"') + '</a></td></tr>' +
+    '<tr><td bgcolor="' + C.yellow + '" height="34" align="center" valign="middle"><a class="band" href="' + back + '">' +
+    '<font face="Times" size="5" class="wake" color="' + C.indigo + '">Move the mouse to use the agents yourself.</font></a></td></tr>' +
+    '</table>' + sound(on) + '</td></tr></table>';
+  return document_(req, { title: 'The First Signs of Agents', css: css, html: html + '\n' + WAKE });
 }
 
 // ---- HTTP --------------------------------------------------------------------------
@@ -240,10 +293,11 @@ function handle(req, res) {
 
   if (parts[0] === '') {
     // the music is on unless switched off; the switch is remembered in a cookie
-    var mq = parseQuery(raw).music, on = !/(^|;\s*)music=off/.test(req.headers.cookie || ''), extra = {};
+    var mq = parseQuery(raw).music, on = musicOn(req), extra = {};
     if (mq === 'on' || mq === 'off') { on = mq === 'on'; extra['Set-Cookie'] = 'music=' + mq + '; path=' + BASE + '/'; }
     return sendHtml(res, startPage(req, on), extra);
   }
+  if (parts[0] === 'demo' && (parts.length === 1 || parts.length === 2 && parts[1] === '')) return sendHtml(res, demoPage(req, musicOn(req)));
 
   if ((parts[0] === 'img' && /^[a-z0-9@-]+\.(gif|jpg|png)$/.test(parts[1]) || parts[0] === 'sound' && /^[a-z0-9-]+\.mp3$/.test(parts[1])) && parts.length === 2) {
     return fs.readFile(path.join(parts[0] === 'img' ? IMG_DIR : SOUND_DIR, parts[1]), function (err, data) {

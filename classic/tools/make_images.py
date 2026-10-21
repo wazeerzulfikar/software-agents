@@ -253,6 +253,22 @@ def music_icons():
         big.resize((W * 4, H * 4), Image.LANCZOS).save(os.path.join(OUT, name + '@4x.png'))
 
 
+def saver_icon():
+    """The start page's way into the screensaver, beside the music note and
+    drawn the same way: a small screen with a play sign on it, in yellow."""
+    from PIL import ImageDraw
+    INDIGO, YELLOW = (0x41, 0x3f, 0x92), (0xe8, 0xe7, 0x2e)
+    W, H, K = 20, 18, 16
+    big = Image.new('RGB', (W * K, H * K), INDIGO)
+    d = ImageDraw.Draw(big)
+    d.rounded_rectangle((1.4 * K, 1.2 * K, 18.6 * K, 13.0 * K), radius=int(2.2 * K), outline=YELLOW, width=int(1.5 * K))   # the screen
+    d.rectangle((8.6 * K, 13.0 * K, 11.4 * K, 15.2 * K), fill=YELLOW)                                                      # its neck
+    d.rounded_rectangle((5.0 * K, 15.0 * K, 15.0 * K, 16.8 * K), radius=int(0.8 * K), fill=YELLOW)                          # and foot
+    d.polygon([(7.9 * K, 3.9 * K), (13.6 * K, 7.1 * K), (7.9 * K, 10.3 * K)], fill=YELLOW)                                # play
+    gif(big.resize((W, H), Image.LANCZOS), 'saver.gif')
+    big.resize((W * 4, H * 4), Image.LANCZOS).save(os.path.join(OUT, 'saver@4x.png'))
+
+
 def spacer():
     # The canonical 43-byte transparent spacer of the 1990s. Netscape 4 draws
     # stray marks when it stretches a 1x1 GIF encoded any other way.
@@ -264,6 +280,7 @@ if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     spacer()
     music_icons()
+    saver_icon()
     emacs(x11_fonts())
     firefly()
     yenta()
