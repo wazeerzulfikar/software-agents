@@ -63,7 +63,8 @@ These browsers cannot run the modern version's JavaScript, so this version conta
 - **Pages reload themselves** while something is happening on its own: Kasbah's agent bargaining, or Yenta finding an interest or getting a reply.
 - **A prototype returns to the start page** after 5 minutes on the same page.
 - **Every page fits a small browser window,** about 780 by 520 pixels, without scrolling. The label over each prototype is shorter, and Kasbah's form is in two columns.
-- **The start page plays music**: two minutes of early-1990s-style computer music, made with ElevenLabs' music model. It is a plain MP3 that the browser hands to QuickTime (version 4 or later, so any Mac OS 9). It plays on the start page only.
+- **The start page plays music**, "Retro Gadget Waltz". It is a plain MP3 that the browser hands to QuickTime (version 4 or later, so any Mac OS 9), shown as QuickTime's controller bar in the top right corner; a modern browser shows its own player there. It starts by itself if the browser allows, loops, and plays on the start page only.
+- **In a modern browser with a large window, the start page is enlarged to fill it.** Browsers of the time ignore that rule and keep the page at its small size.
 
 To run it, with Node 18 or later and nothing to install:
 
@@ -96,7 +97,7 @@ On the exhibit's server, `classic/original-agents-classic.service` runs it under
 }
 ```
 
-The images in `classic/img/` are made from `assets/` and the start-page screenshot by `python3 classic/tools/make_images.py` (Pillow, and Chrome for Kasbah's menu bar). The music, `classic/sound/agents.mp3`, came from ElevenLabs' music API (`music_v2_5`, MP3 at 44.1 kHz and 128 kbps) with the request in `classic/tools/music_request.json`. Its ID3 tag was removed, because it uses a version newer than the QuickTime of the time.
+The images in `classic/img/` are made from `assets/` and the start-page screenshot by `python3 classic/tools/make_images.py` (Pillow, and Chrome for Kasbah's menu bar). The music, `classic/sound/agents.mp3`, is converted from `assets/Retro_Gadget_Waltz_2026-10-21T171128.wav`. That 23 MB source is kept out of the repository. To convert it again: `ffmpeg -i assets/Retro_Gadget_Waltz_2026-10-21T171128.wav -ar 44100 -c:a libmp3lame -b:a 128k -map_metadata -1 -id3v2_version 0 -write_xing 0 classic/sound/agents.mp3`. That gives an MPEG-1 Layer III file with no tags, which the QuickTime of the time plays.
 
 ## How it is made
 
@@ -120,7 +121,7 @@ js/                 shell.js (scaling, navigation, idle reset) and one script pe
                     xfonts.js      X11 misc-fixed bitmap fonts
 classic/            the version for 1990s browsers: server.js and one module per prototype,
                     img/ (GIF and JPEG), sound/ (the start page's music),
-                    tools/ (make_images.py, music_request.json), and a systemd unit
+                    tools/make_images.py, and a systemd unit
 tools/              make_homr_banner.py: HOMR's banner, from the figure's firefly banner
 assets/             images cut from the original figures (homr/banner.png is the one changed), and the period fonts
 references/         the papers the prototypes are based on

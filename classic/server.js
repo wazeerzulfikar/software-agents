@@ -121,16 +121,33 @@ const PROTOS = [
   { key: 'kasbah', thumb: 'thumb-kasbah.jpg', name: 'Kasbah', who: 'Anthony Chavez & Pattie Maes', what: 'A marketplace where your agent does the haggling for you.' }
 ];
 
-/* The start page's music: two minutes of early-1990s computer music, made
-   with ElevenLabs' music model from classic/tools/music_request.json. It is
-   a plain MP3 (MPEG-1 Layer III, 128 kbps, 44.1 kHz, no ID3 tag), which the
-   browser hands to the QuickTime plug-in (QuickTime 4 and later, so every
-   Mac OS 9). <bgsound> is for Internet Explorer without a plug-in. It plays
-   on the start page only: each prototype page reloads, which would start it
-   again every time. */
+/* The start page's music: "Retro Gadget Waltz", two minutes, converted from
+   the WAV in assets/ (not in the repository; see the README) to a plain MP3
+   that QuickTime of the time can play: MPEG-1 Layer III, 128 kbps,
+   44.1 kHz, no ID3 tag.
+
+   Browsers of the time do not know <audio>, so they skip it and use what is
+   inside: an <embed> that the browser hands to the QuickTime plug-in
+   (QuickTime 4 and later, so every Mac OS 9), shown as QuickTime's own
+   controller bar, because some browsers do not start a hidden plug-in. A
+   modern browser plays the <audio> instead. Both try to start on their own
+   and loop; if the browser holds the sound back, the play button is there.
+   It plays on the start page only: each prototype page reloads, which would
+   start it again every time. */
+const MUSIC_URL = BASE + '/sound/agents.mp3';
 const MUSIC =
-  '<embed src="' + BASE + '/sound/agents.mp3" type="audio/mpeg" autostart="true" autoplay="true" loop="true" hidden="true" width="2" height="2" volume="70">' +
-  '<noembed><bgsound src="' + BASE + '/sound/agents.mp3" loop="infinite"></noembed>';
+  '<audio src="' + MUSIC_URL + '" autoplay loop controls style="width: 210px; height: 28px; vertical-align: middle;">' +
+  '<embed src="' + MUSIC_URL + '" type="audio/mpeg" width="180" height="16" autoplay="true" autostart="true" loop="true" controller="true" volume="80" bgcolor="#413f92" align="absmiddle">' +
+  '<noembed><bgsound src="' + MUSIC_URL + '" loop="infinite"><a href="' + MUSIC_URL + '">play</a></noembed>' +
+  '</audio>';
+
+/* The start page is drawn for a window of about 780 by 560, the size of the
+   Mac OS 9 machine's. A modern browser in a larger window enlarges it to
+   fill the window, in steps, as the modern exhibit scales its stage. These
+   are CSS3 media queries, which browsers of the time skip entirely. */
+const ZOOM = [1.15, 1.3, 1.45, 1.6, 1.8, 2, 2.3, 2.6].map(function (z) {
+  return '@media (min-width: ' + Math.round(780 * z) + 'px) and (min-height: ' + Math.round(560 * z) + 'px) { body { zoom: ' + z + '; } }\n';
+}).join('');
 
 function startPage(req) {
   var css =
@@ -139,10 +156,13 @@ function startPage(req) {
     '.quote { font-family: Times, "Times New Roman", serif; font-size: 15px; line-height: 20px; font-style: italic; }\n' +
     '.name { font-family: Times, "Times New Roman", serif; font-size: 22px; line-height: 25px; color: #ffffff; }\n' +
     '.who { font-family: Georgia, Times, serif; font-size: 13px; line-height: 16px; font-style: italic; }\n' +
-    '.what { font-family: Times, "Times New Roman", serif; font-size: 14px; line-height: 17px; }\n';
+    '.what { font-family: Times, "Times New Roman", serif; font-size: 14px; line-height: 17px; }\n' +
+    ZOOM;
   function cap(text, colour) { return '<font face="Helvetica,Arial" size="1" class="cap" color="' + (colour || C.lilac) + '">' + text + '</font>'; }
   var cols = PROTOS.map(function (p, i) {
     var href = BASE + '/' + p.key + '/';
+    // a 420-pixel picture shown at 172, so it stays sharp when a modern
+    // browser enlarges the page (Netscape 4 cannot scale an image to a column)
     return '<td valign="top" width="25%"><a href="' + href + '">' + img(p.thumb, 172, 97, 'alt="' + p.name + '"') + '</a><br>' + spacer(1, 10) + '<br>' +
       cap('PROTOTYPE ' + (i + 1)) + '<br>' + spacer(1, 2) + '<br>' +
       '<a class="band" href="' + href + '"><font face="Times" size="5" class="name" color="#ffffff">' + p.name + '</font></a><br>' + spacer(1, 3) + '<br>' +
@@ -151,22 +171,26 @@ function startPage(req) {
       '<a class="band" href="' + href + '">' + cap('USE IT &raquo;', C.yellow) + '</a></td>' +
       (i < PROTOS.length - 1 ? '<td width="14">' + spacer(14, 1) + '</td>' : '');
   }).join('');
-  var html =
-    '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%"><tr><td width="22">' + spacer(22, 1) + '</td><td valign="middle">' +
+  var top =
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
-    '<td>' + spacer(1, 8) + '<br>' + cap('MIT MEDIA LAB &nbsp;/&nbsp; SOFTWARE AGENTS GROUP') + '</td>' +
-    '<td align="right">' + spacer(1, 8) + '<br>' + cap('1994 - 1999') + '</td></tr></table>' +
-    spacer(1, 8) + '<br><font face="Times" size="7" class="big" color="' + C.yellow + '">The First Signs of Agents</font><br>' + spacer(1, 10) + '<br>' +
+    '<td valign="middle">' + spacer(1, 8) + '<br>' + cap('MIT MEDIA LAB &nbsp;/&nbsp; SOFTWARE AGENTS GROUP &nbsp;/&nbsp; 1994 - 1999') + '</td>' +
+    '<td valign="bottom" align="right" nowrap>' + cap('MUSIC') + '&nbsp;&nbsp;' + MUSIC + '</td></tr></table>' +
+    spacer(1, 4) + '<br><font face="Times" size="7" class="big" color="' + C.yellow + '">The First Signs of Agents</font><br>' + spacer(1, 10) + '<br>' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
     '<td valign="top" width="50%"><font face="Times" size="4" class="lede" color="#ffffff">Four software agents from Pattie Maes’s group, recreated as working prototypes. You can choose one below and use it.</font></td>' +
     '<td width="40">' + spacer(40, 1) + '</td>' +
     '<td valign="top"><font face="Times" size="3" class="quote" color="' + C.soft + '"><i>"We need to be able to delegate to what could be thought of as ‘extra eyes or extra ears’ that are on the lookout for things that you may be interested in."</i></font><br>' +
-    spacer(1, 10) + '<br>' + cap('PATTIE MAES, DEBATING BEN SHNEIDERMAN, 1997') + '</td></tr></table>' +
-    spacer(1, 10) + '<br><table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td bgcolor="#7d7bbf">' + spacer(1, 1) + '</td></tr></table>' +
+    spacer(1, 10) + '<br>' + cap('PATTIE MAES, DEBATING BEN SHNEIDERMAN, 1997') + '</td></tr></table>';
+  var middle =
+    '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td bgcolor="#7d7bbf">' + spacer(1, 1) + '</td></tr></table>' +
     spacer(1, 8) + '<br>' + cap('CHOOSE A PROTOTYPE TO USE', C.yellow) + '<br>' + spacer(1, 8) + '<br>' +
-    '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' + cols + '</tr></table>' +
-    spacer(1, 10) + '<br>' + cap('AFTER "DIRECT MANIPULATION VS. INTERFACE AGENTS", INTERACTIONS, NOV-DEC 1997') + '<br>' + spacer(1, 8) + MUSIC +
-    '</td><td width="22">' + spacer(22, 1) + '</td></tr></table>';
+    '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' + cols + '</tr></table>';
+  var bottom = cap('AFTER "DIRECT MANIPULATION VS. INTERFACE AGENTS", INTERACTIONS, NOV-DEC 1997') + '<br>' + spacer(1, 8);
+  // centred in the window, whatever its height
+  var html =
+    '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%"><tr><td width="22">' + spacer(22, 1) + '</td>' +
+    '<td valign="middle">' + top + spacer(1, 12) + '<br>' + middle + spacer(1, 12) + '<br>' + bottom + '</td>' +
+    '<td width="22">' + spacer(22, 1) + '</td></tr></table>';
   return document_(req, { title: 'The First Signs of Agents', css: css, html: html });
 }
 

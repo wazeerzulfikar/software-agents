@@ -25,3 +25,6 @@ Desktop.ini
 # Local screenshots of the exhibit (only the start page is kept, for the README)
 screenshots/*
 !screenshots/index.png
+
+# Source audio (large); the site serves classic/sound/agents.mp3 made from it
+*.wav

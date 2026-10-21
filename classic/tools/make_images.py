@@ -204,8 +204,8 @@ def thumbs():
     sheet = Image.open(src('screenshots', 'index.png')).convert('RGB')
     for i, name in enumerate(['homr', 'ra', 'yenta', 'kasbah']):
         x = 68 + i * (422 + 32)
-        # 172 wide, so four fit across an 800x600 screen
-        jpg(sheet.crop((x + 1, 573, x + 421, 573 + 236)).resize((172, 97), Image.LANCZOS), 'thumb-' + name + '.jpg', 90)
+        # full size: the start page scales them to the width of its columns
+        jpg(sheet.crop((x + 1, 573, x + 421, 573 + 236)), 'thumb-' + name + '.jpg', 85)
 
 
 def spacer():
