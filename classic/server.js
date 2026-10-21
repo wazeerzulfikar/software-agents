@@ -214,22 +214,38 @@ function startPage(req, on) {
 
    Moving the mouse ends it. That takes the only script in this version,
    written for the JavaScript of Netscape 3 and 4 and Internet Explorer 4 and
-   5. Without it, a click anywhere on the picture or the line under it ends
-   the screensaver just the same. */
+   5. Netscape 4 on the Mac never passes the movement of the mouse to a page,
+   so the picture is also an image map, a grid of areas that each tell when
+   the mouse comes into them, which Netscape has done since version 3: the
+   mouse going from one area into another ends the screensaver. Every area is
+   also a link, so without any script a click ends it just the same. */
+const WAKE_AREA = { w: 48, h: 40 };
 const WAKE =
   '<script language="JavaScript"><!--\n' +
-  'var x0 = -1, y0 = 0, t0 = new Date().getTime();\n' +
+  'var x0 = -1, y0 = 0, last = -1, t0 = new Date().getTime();\n' +
   'function wake() { location.href = "' + BASE + '/"; return true; }\n' +
+  'function settled() { return new Date().getTime() - t0 > 2000; }\n' +
   'function moved(e) {\n' +
   '  if (!e) e = window.event;\n' +
-  '  if (!e || new Date().getTime() - t0 < 1500) return true;\n' +
+  '  if (!e || !settled()) return true;\n' +
   '  if (x0 < 0) { x0 = e.screenX; y0 = e.screenY; return true; }\n' +
   '  if (Math.abs(e.screenX - x0) + Math.abs(e.screenY - y0) > 6) wake();\n' +
   '  return true;\n' +
   '}\n' +
+  '// the image map: an area the mouse has come into, other than the one it rested on\n' +
+  'function over(k) { if (settled() && k != last) wake(); last = k; return true; }\n' +
   'if (document.layers) document.captureEvents(Event.MOUSEMOVE | Event.MOUSEDOWN | Event.KEYDOWN);\n' +
   'document.onmousemove = moved; document.onmousedown = wake; document.onkeydown = wake;\n' +
   '//--></script>';
+function wakeMap(w, h) {
+  var html = '<map name="wake">', k = 0;
+  for (var y = 0; y < h; y += WAKE_AREA.h) {
+    for (var x = 0; x < w; x += WAKE_AREA.w) {
+      html += '<area shape="rect" coords="' + x + ',' + y + ',' + Math.min(x + WAKE_AREA.w, w) + ',' + Math.min(y + WAKE_AREA.h, h) + '" href="' + BASE + '/" onMouseOver="return over(' + (k++) + ')">';
+    }
+  }
+  return html + '</map>';
+}
 
 // beside the music note on the start page: start the screensaver now
 function saver() {
@@ -245,13 +261,14 @@ function demoPage(req, on) {
   var back = BASE + '/';
   // the recording, and under it, on a yellow bar the width of the recording, what to do
   var html =
+    WAKE + '\n' + wakeMap(766, 520) + '\n' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td align="center">' +
     '<table border="0" cellspacing="0" cellpadding="0" width="766">' +
-    '<tr><td><a href="' + back + '">' + img('screensaver.gif', 766, 520, 'alt="The four prototypes in use"') + '</a></td></tr>' +
-    '<tr><td bgcolor="' + C.yellow + '" height="34" align="center" valign="middle"><a class="band" href="' + back + '">' +
+    '<tr><td>' + img('screensaver.gif', 766, 520, 'usemap="#wake" alt="The four prototypes in use"') + '</td></tr>' +
+    '<tr><td bgcolor="' + C.yellow + '" height="34" align="center" valign="middle"><a class="band" href="' + back + '" onMouseOver="return over(-2)">' +
     '<font face="Times" size="5" class="wake" color="' + C.indigo + '">Move the mouse to use the agents yourself.</font></a></td></tr>' +
     '</table>' + sound(on) + '</td></tr></table>';
-  return document_(req, { title: 'The First Signs of Agents', css: css, html: html + '\n' + WAKE });
+  return document_(req, { title: 'The First Signs of Agents', css: css, html: html });
 }
 
 // ---- HTTP --------------------------------------------------------------------------
