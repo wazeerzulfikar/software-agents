@@ -88,7 +88,7 @@ function band(agent, req) {
   return '<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="' + C.indigo + '"><tr><td>' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
     '<td width="16">' + spacer(16, 1) + '</td>' +
-    '<td valign="top" nowrap>' + spacer(1, 7) + '<br>' + cap(link(BASE + '/', '&laquo;&nbsp;THE ORIGINAL AGENTS')) + '</td>' +
+    '<td valign="top" nowrap>' + spacer(1, 7) + '<br>' + cap(link(BASE + '/', '&laquo;&nbsp;THE FIRST SIGNS OF AGENTS')) + '</td>' +
     '<td valign="top" align="right" nowrap>' + spacer(1, 7) + '<br>' +
     cap(link(BASE + '/' + agent.key + '/', 'START OVER') + ' &nbsp; &nbsp; &nbsp; ' + link(BASE + '/' + prev.key + '/', '&laquo;') + ' &nbsp; ' +
       '<font color="#ffffff">' + (i + 1) + '</font> / ' + n + ' &nbsp; ' + link(BASE + '/' + next.key + '/', '&raquo;')) + '</td>' +
@@ -143,7 +143,7 @@ function startPage(req) {
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
     '<td>' + spacer(1, 16) + '<br>' + cap('MIT MEDIA LAB &nbsp;/&nbsp; SOFTWARE AGENTS GROUP') + '</td>' +
     '<td align="right">' + spacer(1, 16) + '<br>' + cap('1994 - 1999') + '</td></tr></table>' +
-    spacer(1, 8) + '<br><font face="Times" size="7" class="big" color="' + C.yellow + '">The Original Agents</font><br>' + spacer(1, 10) + '<br>' +
+    spacer(1, 8) + '<br><font face="Times" size="7" class="big" color="' + C.yellow + '">The First Signs of Agents</font><br>' + spacer(1, 10) + '<br>' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
     '<td valign="top" width="50%"><font face="Times" size="4" class="lede" color="#ffffff">Four software agents from Pattie Maes’s group, recreated as working prototypes. Choose one below and use it, just as people did in the 1990s.</font></td>' +
     '<td width="40">' + spacer(40, 1) + '</td>' +
@@ -154,7 +154,7 @@ function startPage(req) {
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' + cols + '</tr></table>' +
     spacer(1, 14) + '<br>' + cap('AFTER "DIRECT MANIPULATION VS. INTERFACE AGENTS", INTERACTIONS, NOV-DEC 1997') + '<br>' + spacer(1, 10) +
     '</td><td width="22">' + spacer(22, 1) + '</td></tr></table>';
-  return document_(req, { title: 'The Original Agents', css: css, html: html });
+  return document_(req, { title: 'The First Signs of Agents', css: css, html: html });
 }
 
 // ---- HTTP --------------------------------------------------------------------------

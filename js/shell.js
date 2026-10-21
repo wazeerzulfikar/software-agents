@@ -33,7 +33,7 @@
     var back = document.createElement('a');
     back.className = 'deck-back';
     back.href = 'index.html';
-    back.innerHTML = '<span class="arrow">&larr;</span>The Original Agents';
+    back.innerHTML = '<span class="arrow">&larr;</span>The First Signs of Agents';
     stage.appendChild(back);
 
     var count = document.createElement('div');

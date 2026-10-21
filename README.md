@@ -1,8 +1,8 @@
-# The Original Agents
+# The First Signs of Agents
 
 **Four software agents from Pattie Maes's Software Agents Group at the MIT Media Lab (1994–1999), recreated as working prototypes you can use in a browser.**
 
-![The start page: "The Original Agents" in yellow on indigo, with live previews of HOMR, the Remembrance Agent, Yenta and Kasbah below](screenshots/index.png)
+![The start page: "The First Signs of Agents" in yellow on indigo, with live previews of HOMR, the Remembrance Agent, Yenta and Kasbah below](screenshots/index.png)
 
 This was made as a keyboard-and-mouse exhibit for an MIT Media Lab alumni event. Each prototype is drawn to match the original interface as it appears in the published figures, mainly those in Shneiderman and Maes's 1997 *interactions* debate, "Direct Manipulation vs. Interface Agents". Behind each screen is a small working version of the idea, so visitors can do a few real things with each agent instead of only looking at a picture of it.
 
