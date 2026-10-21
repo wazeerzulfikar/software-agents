@@ -115,10 +115,10 @@ function document_(req, o) {
 
 // ---- the start page --------------------------------------------------------------
 const PROTOS = [
-  { key: 'homr', thumb: 'thumb-homr.jpg', name: 'HOMR', who: 'Upendra Shardanand, Max Metral & Pattie Maes', what: 'A personal critic that learns your taste in music from people like you.' },
+  { key: 'homr', thumb: 'thumb-homr.jpg', name: 'HOMR', who: 'Upendra Shardanand & Max Metral', what: 'A personal critic that learns your taste in music from people like you.' },
   { key: 'ra', thumb: 'thumb-ra.jpg', name: 'Remembrance Agent', who: 'Bradley Rhodes & Thad Starner', what: 'A memory that reads over your shoulder and reminds you of what you once knew.' },
   { key: 'yenta', thumb: 'thumb-yenta.jpg', name: 'Yenta', who: 'Leonard Foner', what: 'A matchmaker that introduces you to strangers who share your interests.' },
-  { key: 'kasbah', thumb: 'thumb-kasbah.jpg', name: 'Kasbah', who: 'Anthony Chavez & Pattie Maes', what: 'A marketplace where your agent does the haggling for you.' }
+  { key: 'kasbah', thumb: 'thumb-kasbah.jpg', name: 'Kasbah', who: 'Anthony Chavez', what: 'A marketplace where your agent does the haggling for you.' }
 ];
 
 /* The start page's music: "Retro Gadget Waltz", two minutes, converted from
