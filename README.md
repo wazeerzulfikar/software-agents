@@ -63,6 +63,7 @@ These browsers cannot run the modern version's JavaScript, so this version conta
 - **Pages reload themselves** while something is happening on its own: Kasbah's agent bargaining, or Yenta finding an interest or getting a reply.
 - **A prototype returns to the start page** after 5 minutes on the same page.
 - **Every page fits a small browser window,** about 780 by 520 pixels, without scrolling. The label over each prototype is shorter, and Kasbah's form is in two columns.
+- **The start page plays music**, an original loop in the style of early-1990s computer music. It is a MIDI file that the browser hands to QuickTime, as pages of the time did. It plays on the start page only.
 
 To run it, with Node 18 or later and nothing to install:
 
@@ -95,7 +96,7 @@ On the exhibit's server, `classic/original-agents-classic.service` runs it under
 }
 ```
 
-The images in `classic/img/` are made from `assets/` and the start-page screenshot by `python3 classic/tools/make_images.py` (Pillow, and Chrome for Kasbah's menu bar).
+The images in `classic/img/` are made from `assets/` and the start-page screenshot by `python3 classic/tools/make_images.py` (Pillow, and Chrome for Kasbah's menu bar). The music, `classic/sound/agents.mid`, is composed by `python3 classic/tools/make_music.py`.
 
 ## How it is made
 
@@ -118,7 +119,8 @@ js/                 shell.js (scaling, navigation, idle reset) and one script pe
                     ra-corpus.js   the Remembrance Agent's e-mail and notes
                     xfonts.js      X11 misc-fixed bitmap fonts
 classic/            the version for 1990s browsers: server.js and one module per prototype,
-                    img/ (GIF and JPEG), tools/make_images.py, and a systemd unit
+                    img/ (GIF and JPEG), sound/ (the start page's MIDI music),
+                    tools/ (make_images.py, make_music.py), and a systemd unit
 assets/             images cut from the original figures, and the period fonts
 references/         the papers the prototypes are based on
 screenshots/        the start page image above (other screenshots stay local)

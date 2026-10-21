@@ -115,11 +115,19 @@ function document_(req, o) {
 
 // ---- the start page --------------------------------------------------------------
 const PROTOS = [
-  { key: 'homr', thumb: 'thumb-homr.jpg', name: 'HOMR', what: 'A personal critic that learns your taste in music from people like you.' },
-  { key: 'ra', thumb: 'thumb-ra.jpg', name: 'Remembrance Agent', what: 'A memory that reads over your shoulder and reminds you of what you once knew.' },
-  { key: 'yenta', thumb: 'thumb-yenta.jpg', name: 'Yenta', what: 'A matchmaker that introduces you to strangers who share your interests.' },
-  { key: 'kasbah', thumb: 'thumb-kasbah.jpg', name: 'Kasbah', what: 'A marketplace where your agent does the haggling for you.' }
+  { key: 'homr', thumb: 'thumb-homr.jpg', name: 'HOMR', who: 'Upendra Shardanand, Max Metral & Pattie Maes', what: 'A personal critic that learns your taste in music from people like you.' },
+  { key: 'ra', thumb: 'thumb-ra.jpg', name: 'Remembrance Agent', who: 'Bradley Rhodes & Thad Starner', what: 'A memory that reads over your shoulder and reminds you of what you once knew.' },
+  { key: 'yenta', thumb: 'thumb-yenta.jpg', name: 'Yenta', who: 'Leonard Foner', what: 'A matchmaker that introduces you to strangers who share your interests.' },
+  { key: 'kasbah', thumb: 'thumb-kasbah.jpg', name: 'Kasbah', who: 'Anthony Chavez & Pattie Maes', what: 'A marketplace where your agent does the haggling for you.' }
 ];
+
+/* The start page's music (classic/tools/make_music.py). Browsers of the time
+   played MIDI through a plug-in, on the Mac QuickTime's; <bgsound> is for
+   Internet Explorer without one. It plays on the start page only: each
+   prototype page reloads, which would start it again every time. */
+const MUSIC =
+  '<embed src="' + BASE + '/sound/agents.mid" type="audio/midi" autostart="true" autoplay="true" loop="true" hidden="true" width="2" height="2" volume="70">' +
+  '<noembed><bgsound src="' + BASE + '/sound/agents.mid" loop="infinite"></noembed>';
 
 function startPage(req) {
   var css =
@@ -127,39 +135,42 @@ function startPage(req) {
     '.lede { font-family: Times, "Times New Roman", serif; font-size: 18px; line-height: 23px; }\n' +
     '.quote { font-family: Times, "Times New Roman", serif; font-size: 15px; line-height: 20px; font-style: italic; }\n' +
     '.name { font-family: Times, "Times New Roman", serif; font-size: 22px; line-height: 25px; color: #ffffff; }\n' +
+    '.who { font-family: Georgia, Times, serif; font-size: 13px; line-height: 16px; font-style: italic; }\n' +
     '.what { font-family: Times, "Times New Roman", serif; font-size: 14px; line-height: 17px; }\n';
   function cap(text, colour) { return '<font face="Helvetica,Arial" size="1" class="cap" color="' + (colour || C.lilac) + '">' + text + '</font>'; }
   var cols = PROTOS.map(function (p, i) {
     var href = BASE + '/' + p.key + '/';
     return '<td valign="top" width="25%"><a href="' + href + '">' + img(p.thumb, 172, 97, 'alt="' + p.name + '"') + '</a><br>' + spacer(1, 10) + '<br>' +
       cap('PROTOTYPE ' + (i + 1)) + '<br>' + spacer(1, 2) + '<br>' +
-      '<a class="band" href="' + href + '"><font face="Times" size="5" class="name" color="#ffffff">' + p.name + '</font></a><br>' + spacer(1, 2) + '<br>' +
+      '<a class="band" href="' + href + '"><font face="Times" size="5" class="name" color="#ffffff">' + p.name + '</font></a><br>' + spacer(1, 3) + '<br>' +
+      '<font face="Georgia,Times" size="2" class="who" color="' + C.yellow + '"><i>' + esc(p.who) + '</i></font><br>' + spacer(1, 5) + '<br>' +
       '<font face="Times" size="2" class="what" color="' + C.soft + '">' + p.what + '</font><br>' + spacer(1, 6) + '<br>' +
       '<a class="band" href="' + href + '">' + cap('USE IT &raquo;', C.yellow) + '</a></td>' +
       (i < PROTOS.length - 1 ? '<td width="14">' + spacer(14, 1) + '</td>' : '');
   }).join('');
   var html =
-    '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td width="22">' + spacer(22, 1) + '</td><td>' +
+    '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%"><tr><td width="22">' + spacer(22, 1) + '</td><td valign="middle">' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
-    '<td>' + spacer(1, 16) + '<br>' + cap('MIT MEDIA LAB &nbsp;/&nbsp; SOFTWARE AGENTS GROUP') + '</td>' +
-    '<td align="right">' + spacer(1, 16) + '<br>' + cap('1994 - 1999') + '</td></tr></table>' +
+    '<td>' + spacer(1, 8) + '<br>' + cap('MIT MEDIA LAB &nbsp;/&nbsp; SOFTWARE AGENTS GROUP') + '</td>' +
+    '<td align="right">' + spacer(1, 8) + '<br>' + cap('1994 - 1999') + '</td></tr></table>' +
     spacer(1, 8) + '<br><font face="Times" size="7" class="big" color="' + C.yellow + '">The First Signs of Agents</font><br>' + spacer(1, 10) + '<br>' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
-    '<td valign="top" width="50%"><font face="Times" size="4" class="lede" color="#ffffff">Four software agents from Pattie Maes’s group, recreated as working prototypes. Choose one below and use it, just as people did in the 1990s.</font></td>' +
+    '<td valign="top" width="50%"><font face="Times" size="4" class="lede" color="#ffffff">Four software agents from Pattie Maes’s group, recreated as working prototypes. You can choose one below and use it.</font></td>' +
     '<td width="40">' + spacer(40, 1) + '</td>' +
     '<td valign="top"><font face="Times" size="3" class="quote" color="' + C.soft + '"><i>"We need to be able to delegate to what could be thought of as ‘extra eyes or extra ears’ that are on the lookout for things that you may be interested in."</i></font><br>' +
     spacer(1, 10) + '<br>' + cap('PATTIE MAES, DEBATING BEN SHNEIDERMAN, 1997') + '</td></tr></table>' +
-    spacer(1, 12) + '<br><table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td bgcolor="#7d7bbf">' + spacer(1, 1) + '</td></tr></table>' +
-    spacer(1, 10) + '<br>' + cap('CHOOSE A PROTOTYPE TO USE', C.yellow) + '<br>' + spacer(1, 8) + '<br>' +
+    spacer(1, 10) + '<br><table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td bgcolor="#7d7bbf">' + spacer(1, 1) + '</td></tr></table>' +
+    spacer(1, 8) + '<br>' + cap('CHOOSE A PROTOTYPE TO USE', C.yellow) + '<br>' + spacer(1, 8) + '<br>' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' + cols + '</tr></table>' +
-    spacer(1, 14) + '<br>' + cap('AFTER "DIRECT MANIPULATION VS. INTERFACE AGENTS", INTERACTIONS, NOV-DEC 1997') + '<br>' + spacer(1, 10) +
+    spacer(1, 10) + '<br>' + cap('AFTER "DIRECT MANIPULATION VS. INTERFACE AGENTS", INTERACTIONS, NOV-DEC 1997') + '<br>' + spacer(1, 8) + MUSIC +
     '</td><td width="22">' + spacer(22, 1) + '</td></tr></table>';
   return document_(req, { title: 'The First Signs of Agents', css: css, html: html });
 }
 
 // ---- HTTP --------------------------------------------------------------------------
 const IMG_DIR = path.join(__dirname, 'img');
-const TYPES = { '.gif': 'image/gif', '.jpg': 'image/jpeg' };
+const SOUND_DIR = path.join(__dirname, 'sound');
+const TYPES = { '.gif': 'image/gif', '.jpg': 'image/jpeg', '.mid': 'audio/midi' };
 
 function send(res, status, headers, body) {
   headers['Content-Length'] = Buffer.byteLength(body);
@@ -195,8 +206,8 @@ function handle(req, res) {
 
   if (parts[0] === '') return sendHtml(res, startPage(req));
 
-  if (parts[0] === 'img' && parts.length === 2 && /^[a-z0-9-]+\.(gif|jpg)$/.test(parts[1])) {
-    return fs.readFile(path.join(IMG_DIR, parts[1]), function (err, data) {
+  if ((parts[0] === 'img' && /^[a-z0-9-]+\.(gif|jpg)$/.test(parts[1]) || parts[0] === 'sound' && /^[a-z0-9-]+\.mid$/.test(parts[1])) && parts.length === 2) {
+    return fs.readFile(path.join(parts[0] === 'img' ? IMG_DIR : SOUND_DIR, parts[1]), function (err, data) {
       if (err) return notFound(req, res);
       send(res, 200, { 'Content-Type': TYPES[path.extname(parts[1])], 'Cache-Control': 'max-age=86400' }, data);
     });
