@@ -220,6 +220,8 @@ function startPage(req, on) {
    mouse going from one area into another ends the screensaver. Every area is
    also a link, so without any script a click ends it just the same. */
 const WAKE_AREA = { w: 48, h: 40 };
+// images are cached for a day, so the recording's address changes whenever it does
+const SAVER_VERSION = crypto.createHash('md5').update(fs.readFileSync(path.join(__dirname, 'img', 'screensaver.gif'))).digest('hex').slice(0, 8);
 const WAKE =
   '<script language="JavaScript"><!--\n' +
   'var x0 = -1, y0 = 0, last = -1, t0 = new Date().getTime();\n' +
@@ -264,7 +266,7 @@ function demoPage(req, on) {
     WAKE + '\n' + wakeMap(766, 520) + '\n' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td align="center">' +
     '<table border="0" cellspacing="0" cellpadding="0" width="766">' +
-    '<tr><td>' + img('screensaver.gif', 766, 520, 'usemap="#wake" alt="The four prototypes in use"') + '</td></tr>' +
+    '<tr><td>' + img('screensaver.gif?' + SAVER_VERSION, 766, 520, 'usemap="#wake" alt="The four prototypes in use"') + '</td></tr>' +
     '<tr><td bgcolor="' + C.yellow + '" height="34" align="center" valign="middle"><a class="band" href="' + back + '" onMouseOver="return over(-2)">' +
     '<font face="Times" size="5" class="wake" color="' + C.indigo + '">Move the mouse to use the agents yourself.</font></a></td></tr>' +
     '</table>' + sound(on) + '</td></tr></table>';
