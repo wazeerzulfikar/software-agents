@@ -126,20 +126,27 @@ const PROTOS = [
    that QuickTime of the time can play: MPEG-1 Layer III, 128 kbps,
    44.1 kHz, no ID3 tag.
 
-   Browsers of the time do not know <audio>, so they skip it and use what is
-   inside: an <embed> that the browser hands to the QuickTime plug-in
-   (QuickTime 4 and later, so every Mac OS 9), shown as QuickTime's own
-   controller bar, because some browsers do not start a hidden plug-in. A
-   modern browser plays the <audio> instead. Both try to start on their own
-   and loop; if the browser holds the sound back, the play button is there.
-   It plays on the start page only: each prototype page reloads, which would
-   start it again every time. */
+   It is switched on and off by a music note in the corner, a plain link to
+   the start page with ?music=on or ?music=off (remembered in a cookie), so
+   no script is needed. While it is on, the page carries the sound: an HTML5
+   <audio> for modern browsers and, inside it for browsers that do not know
+   <audio>, an <embed> for the QuickTime plug-in. The <embed> is 2 pixels
+   square rather than hidden, because some browsers never start a hidden
+   plug-in. It plays on the start page only: each prototype page reloads,
+   which would start it again every time. */
 const MUSIC_URL = BASE + '/sound/agents.mp3';
-const MUSIC =
-  '<audio src="' + MUSIC_URL + '" autoplay loop controls style="width: 210px; height: 28px; vertical-align: middle;">' +
-  '<embed src="' + MUSIC_URL + '" type="audio/mpeg" width="180" height="16" autoplay="true" autostart="true" loop="true" controller="true" volume="80" bgcolor="#413f92" align="absmiddle">' +
-  '<noembed><bgsound src="' + MUSIC_URL + '" loop="infinite"><a href="' + MUSIC_URL + '">play</a></noembed>' +
-  '</audio>';
+function music(on) {
+  var state = on ? 'on' : 'off';
+  var label = on ? 'Music on: click to turn it off' : 'Music off: click to turn it on';
+  var html = '<a class="band" href="' + BASE + '/?music=' + (on ? 'off' : 'on') + '" title="' + label + '">' +
+    '<img src="' + BASE + '/img/music-' + state + '.gif" srcset="' + BASE + '/img/music-' + state + '@4x.png 4x" width="20" height="18" border="0" alt="' + label + '" class="note"></a>';
+  if (on) {
+    html += '<audio src="' + MUSIC_URL + '" autoplay loop>' +
+      '<embed src="' + MUSIC_URL + '" type="audio/mpeg" width="2" height="2" autoplay="true" autostart="true" loop="true" controller="false" volume="80" bgcolor="#413f92">' +
+      '<noembed><bgsound src="' + MUSIC_URL + '" loop="infinite"></noembed></audio>';
+  }
+  return html;
+}
 
 /* The start page is drawn for a window of about 780 by 560, the size of the
    Mac OS 9 machine's. A modern browser in a larger window enlarges it to
@@ -149,7 +156,7 @@ const ZOOM = [1.15, 1.3, 1.45, 1.6, 1.8, 2, 2.3, 2.6].map(function (z) {
   return '@media (min-width: ' + Math.round(780 * z) + 'px) and (min-height: ' + Math.round(560 * z) + 'px) { body { zoom: ' + z + '; } }\n';
 }).join('');
 
-function startPage(req) {
+function startPage(req, on) {
   var css =
     '.big { font-family: Times, "Times New Roman", serif; font-size: 54px; line-height: 56px; }\n' +
     '.lede { font-family: Times, "Times New Roman", serif; font-size: 18px; line-height: 23px; }\n' +
@@ -174,7 +181,7 @@ function startPage(req) {
   var top =
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
     '<td valign="middle">' + spacer(1, 8) + '<br>' + cap('MIT MEDIA LAB &nbsp;/&nbsp; SOFTWARE AGENTS GROUP &nbsp;/&nbsp; 1994 - 1999') + '</td>' +
-    '<td valign="bottom" align="right" nowrap>' + cap('MUSIC') + '&nbsp;&nbsp;' + MUSIC + '</td></tr></table>' +
+    '<td valign="bottom" align="right" nowrap>' + music(on) + '</td></tr></table>' +
     spacer(1, 4) + '<br><font face="Times" size="7" class="big" color="' + C.yellow + '">The First Signs of Agents</font><br>' + spacer(1, 10) + '<br>' +
     '<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>' +
     '<td valign="top" width="50%"><font face="Times" size="4" class="lede" color="#ffffff">Four software agents from Pattie Maes’s group, recreated as working prototypes. You can choose one below and use it.</font></td>' +
@@ -197,19 +204,19 @@ function startPage(req) {
 // ---- HTTP --------------------------------------------------------------------------
 const IMG_DIR = path.join(__dirname, 'img');
 const SOUND_DIR = path.join(__dirname, 'sound');
-const TYPES = { '.gif': 'image/gif', '.jpg': 'image/jpeg', '.mp3': 'audio/mpeg' };
+const TYPES = { '.gif': 'image/gif', '.jpg': 'image/jpeg', '.png': 'image/png', '.mp3': 'audio/mpeg' };
 
 function send(res, status, headers, body) {
   headers['Content-Length'] = Buffer.byteLength(body);
   res.writeHead(status, headers);
   res.end(body);
 }
-function sendHtml(res, html) {
+function sendHtml(res, html, extra) {
   // no-cache, in all three dialects old browsers understand
-  send(res, 200, {
+  send(res, 200, Object.assign({
     'Content-Type': 'text/html; charset=iso-8859-1', 'Cache-Control': 'no-cache', 'Pragma': 'no-cache',
     'Expires': 'Thu, 01 Jan 1998 00:00:00 GMT'
-  }, Buffer.from(ascii(html), 'latin1'));
+  }, extra || {}), Buffer.from(ascii(html), 'latin1'));
 }
 function redirect(req, res, to) {
   var url = absolute(req, to);
@@ -231,9 +238,14 @@ function handle(req, res) {
   if (pathname.indexOf(BASE + '/') !== 0) return notFound(req, res);
   var parts = pathname.slice(BASE.length + 1).split('/');
 
-  if (parts[0] === '') return sendHtml(res, startPage(req));
+  if (parts[0] === '') {
+    // the music is on unless switched off; the switch is remembered in a cookie
+    var mq = parseQuery(raw).music, on = !/(^|;\s*)music=off/.test(req.headers.cookie || ''), extra = {};
+    if (mq === 'on' || mq === 'off') { on = mq === 'on'; extra['Set-Cookie'] = 'music=' + mq + '; path=' + BASE + '/'; }
+    return sendHtml(res, startPage(req, on), extra);
+  }
 
-  if ((parts[0] === 'img' && /^[a-z0-9-]+\.(gif|jpg)$/.test(parts[1]) || parts[0] === 'sound' && /^[a-z0-9-]+\.mp3$/.test(parts[1])) && parts.length === 2) {
+  if ((parts[0] === 'img' && /^[a-z0-9@-]+\.(gif|jpg|png)$/.test(parts[1]) || parts[0] === 'sound' && /^[a-z0-9-]+\.mp3$/.test(parts[1])) && parts.length === 2) {
     return fs.readFile(path.join(parts[0] === 'img' ? IMG_DIR : SOUND_DIR, parts[1]), function (err, data) {
       if (err) return notFound(req, res);
       send(res, 200, { 'Content-Type': TYPES[path.extname(parts[1])], 'Cache-Control': 'max-age=86400' }, data);

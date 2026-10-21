@@ -63,7 +63,7 @@ These browsers cannot run the modern version's JavaScript, so this version conta
 - **Pages reload themselves** while something is happening on its own: Kasbah's agent bargaining, or Yenta finding an interest or getting a reply.
 - **A prototype returns to the start page** after 5 minutes on the same page.
 - **Every page fits a small browser window,** about 780 by 520 pixels, without scrolling. The label over each prototype is shorter, and Kasbah's form is in two columns.
-- **The start page plays music**, "Retro Gadget Waltz". It is a plain MP3 that the browser hands to QuickTime (version 4 or later, so any Mac OS 9), shown as QuickTime's controller bar in the top right corner; a modern browser shows its own player there. It starts by itself if the browser allows, loops, and plays on the start page only.
+- **The start page plays music**, "Retro Gadget Waltz", on a loop. It is a plain MP3 that the browser hands to QuickTime (version 4 or later, so any Mac OS 9). A music note in the top right corner switches it off and on: it is a plain link, and a cookie remembers the choice. It plays on the start page only. A modern browser stays silent until the visitor has clicked something on the site.
 - **In a modern browser with a large window, the start page is enlarged to fill it.** Browsers of the time ignore that rule and keep the page at its small size.
 
 To run it, with Node 18 or later and nothing to install:

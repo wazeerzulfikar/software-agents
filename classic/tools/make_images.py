@@ -208,6 +208,51 @@ def thumbs():
         jpg(sheet.crop((x + 1, 573, x + 421, 573 + 236)), 'thumb-' + name + '.jpg', 85)
 
 
+def music_icons():
+    """The start page's music switch: beamed eighth notes, yellow while the
+    music plays, a dimmed lilac with a slash through it when it is off. Drawn
+    large and scaled down onto the page's indigo: a GIF at its size on the
+    page for browsers of the time, and a PNG four times the size that modern
+    browsers pick through srcset when they enlarge the page."""
+    from PIL import ImageDraw
+    INDIGO, YELLOW, LILAC = (0x41, 0x3f, 0x92), (0xe8, 0xe7, 0x2e), (0xb9, 0xb7, 0xea)
+    W, H, K = 20, 18, 16                      # size on the page, and the drawing scale
+
+    def notes(d, colour):
+        def head(cx, cy):
+            # an oval tilted up to the right, drawn as a polygon
+            import math
+            pts = []
+            for i in range(48):
+                t = 2 * math.pi * i / 48
+                x, y = 3.0 * math.cos(t), 2.1 * math.sin(t)
+                a = -0.38
+                pts.append(((cx + x * math.cos(a) - y * math.sin(a)) * K, (cy + x * math.sin(a) + y * math.cos(a)) * K))
+            d.polygon(pts, fill=colour)
+        head(5.2, 14.6)
+        head(14.7, 12.6)
+        d.rectangle((7.55 * K, 3.6 * K, 8.55 * K, 14.2 * K), fill=colour)        # stems
+        d.rectangle((17.05 * K, 1.6 * K, 18.05 * K, 12.2 * K), fill=colour)
+        d.polygon([(7.55 * K, 3.4 * K), (18.05 * K, 1.2 * K), (18.05 * K, 4.0 * K), (7.55 * K, 6.2 * K)], fill=colour)   # beam
+
+    def draw(on):
+        big = Image.new('RGB', (W * K, H * K), INDIGO)
+        d = ImageDraw.Draw(big)
+        if on:
+            notes(d, YELLOW)
+        else:
+            dim = tuple(int(i * 0.55 + c * 0.45) for i, c in zip(INDIGO, LILAC))
+            notes(d, dim)
+            d.line((1.0 * K, 1.0 * K, 19.0 * K, 17.0 * K), fill=INDIGO, width=int(3.4 * K))   # a gap either side of the slash
+            d.line((1.0 * K, 1.0 * K, 19.0 * K, 17.0 * K), fill=LILAC, width=int(1.3 * K))
+        return big
+
+    for on in (True, False):
+        big, name = draw(on), 'music-' + ('on' if on else 'off')
+        gif(big.resize((W, H), Image.LANCZOS), name + '.gif')
+        big.resize((W * 4, H * 4), Image.LANCZOS).save(os.path.join(OUT, name + '@4x.png'))
+
+
 def spacer():
     # The canonical 43-byte transparent spacer of the 1990s. Netscape 4 draws
     # stray marks when it stretches a 1x1 GIF encoded any other way.
@@ -218,6 +263,7 @@ def spacer():
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     spacer()
+    music_icons()
     emacs(x11_fonts())
     firefly()
     yenta()
