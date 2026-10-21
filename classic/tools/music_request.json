@@ -1,0 +1,6 @@
+{
+  "model_id": "music_v2_5",
+  "force_instrumental": true,
+  "music_length_ms": 120000,
+  "prompt": "Instrumental early-1990s computer music, as if from a 1993 multimedia CD-ROM or a university computer lab's demo reel. Warm analog synth pads, a bright FM-synthesis electric piano playing a simple hopeful melody, a gentle square-wave arpeggio, a drum machine with soft claps and closed hi-hats, a round synth bass, a touch of early digital reverb. Optimistic, curious and calm; mid-tempo, about 104 BPM; D minor opening into F major. Background music for a museum exhibit about the first software agents. Retro and slightly lo-fi, like it was made on a sampler keyboard in 1993. No vocals, no modern production, no heavy drops, no sound effects."
+}

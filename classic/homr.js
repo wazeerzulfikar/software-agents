@@ -1,5 +1,5 @@
-/* HOMR for 1990s browsers: the Firefly-era page, served the way Firefly
-   served it, as plain HTML forms. The social information filter is the one
+/* HOMR for 1990s browsers: the Firefly-era page, named HOMR throughout and
+   served the way Firefly served it, as plain HTML forms. The social information filter is the one
    in js/homr.js (Ringo's constrained Pearson correlation over a seeded
    community), run here on the server for each visitor. */
 'use strict';
@@ -178,7 +178,7 @@ function page(s, base, n, view, arg) {
     function nav(k, t) {
       return '[<a href="' + href(k) + '"' + (here === k ? ' class="here"' : '') + '>' + t.split('').join('&nbsp;') + '</a>]';
     }
-    return '<center>' + img('ff-banner.jpg', 557, 77, 'usemap="#banner" alt="firefly music"') +
+    return '<center>' + img('ff-banner.jpg', 557, 77, 'usemap="#banner" alt="HOMR music"') +
       '<map name="banner"><area shape="rect" coords="0,0,185,77" href="' + href('people') + '" alt="people">' +
       '<area shape="rect" coords="185,0,375,77" href="' + href('welcome') + '" alt="welcome">' +
       '<area shape="rect" coords="375,0,557,77" href="' + href('buzz') + '" alt="buzz"></map><br>' +
@@ -205,7 +205,7 @@ function page(s, base, n, view, arg) {
         '<tr><td colspan="4">' + spacer(1, 6) + '</td></tr>' +
         '<tr><td></td><td></td><td valign="middle" nowrap><input type="submit" value="Submit and Send More">&nbsp;&nbsp;&nbsp;</td>' +
         '<td valign="middle"><table border="0" cellspacing="0" cellpadding="0"><tr><td valign="middle">' + img('ff-spiral.gif', 102, 52) + '</td>' +
-        '<td width="10">' + spacer(10, 1) + '</td><td valign="middle" nowrap><font class="tell">Tell <b>firefly</b></font><br><tt class="tt">what you\u2019re looking for</tt></td></tr></table></td></tr>' +
+        '<td width="10">' + spacer(10, 1) + '</td><td valign="middle" nowrap><font class="tell">Tell <b>HOMR</b></font><br><tt class="tt">what you\u2019re looking for</tt></td></tr></table></td></tr>' +
         '</table></form>';
     },
 
@@ -214,9 +214,9 @@ function page(s, base, n, view, arg) {
       if (!a) return V.recs();
       var p = predictFor(s, a), h = masthead() + spacer(1, 4) + heading('<b>' + esc(a.name) + '</b>') + '<div class="body">';
       if (s.mine[id]) h += '<p class="lead">You gave ' + esc(a.name) + ' a ' + s.mine[id] + '.</p>';
-      else if (p) h += '<p class="lead"><b>firefly</b> thinks you would give ' + esc(a.name) + ' a <b>' + p.p.toFixed(1) +
+      else if (p) h += '<p class="lead"><b>HOMR</b> thinks you would give ' + esc(a.name) + ' a <b>' + p.p.toFixed(1) +
         '</b>. <tt class="tt">(confidence: ' + confidence(p.n) + ')</tt></p>';
-      else h += '<p class="lead"><b>firefly</b> does not know enough yet to guess what you would think of ' + esc(a.name) + '.</p>';
+      else h += '<p class="lead"><b>HOMR</b> does not know enough yet to guess what you would think of ' + esc(a.name) + '.</p>';
       h += '<form method="get" action="' + href('artist/' + id) + '"><p class="lead">' + hidden({ do: 'rate', n: n }) + menu(s, id) + ' &nbsp; <input type="submit" value="Submit"></p></form>';
 
       var said = neighbours(s).concat(USERS.map(function (u) { return { u: u, s: 0 }; }))
@@ -244,7 +244,7 @@ function page(s, base, n, view, arg) {
     people: function () {
       var nb = neighbours(s).slice(0, 5), h = masthead('people') + spacer(1, 4) +
         heading('<a href="' + href('me') + '" class="plain">' + ME + '</a><b>, You should meet these people.</b>') +
-        '<div class="body"><p class="lead">Their taste in music is the closest to yours. <b>firefly</b> draws on what they love when it picks artists for you.</p>' +
+        '<div class="body"><p class="lead">Their taste in music is the closest to yours. <b>HOMR</b> draws on what they love when it picks artists for you.</p>' +
         '<table border="0" cellspacing="0" cellpadding="1" class="list">';
       nb.forEach(function (x) {
         var raves = Object.keys(x.u.r).filter(function (k) { return x.u.r[k] === 7 && !s.mine[k]; }).slice(0, 2);
@@ -274,7 +274,7 @@ function page(s, base, n, view, arg) {
         var sum = 0, cnt = 0; USERS.forEach(function (u) { if (u.r[a.id]) { sum += u.r[a.id]; cnt++; } });
         return { a: a, avg: cnt ? sum / cnt : 0, n: cnt };
       }).filter(function (r) { return r.n >= 12; }).sort(function (x, y) { return y.avg - x.avg; }).slice(0, 10);
-      var h = masthead('buzz') + spacer(1, 4) + heading('<b>The buzz.</b>') + '<div class="body"><p class="lead">The artists <b>firefly</b> members rate most highly right now, whatever your own taste.</p><table border="0" cellspacing="0" cellpadding="1" class="list">';
+      var h = masthead('buzz') + spacer(1, 4) + heading('<b>The buzz.</b>') + '<div class="body"><p class="lead">The artists <b>HOMR</b> members rate most highly right now, whatever your own taste.</p><table border="0" cellspacing="0" cellpadding="1" class="list">';
       rows.forEach(function (r, i) {
         h += '<tr><td align="right">' + (i + 1) + '. &nbsp;</td><td nowrap>' + artistLink(r.a) + ' &nbsp; &nbsp; </td><td nowrap><tt class="tt">' + r.avg.toFixed(1) + ' from ' + r.n + ' members</tt></td></tr>';
       });
@@ -282,16 +282,16 @@ function page(s, base, n, view, arg) {
     },
 
     welcome: function () {
-      return masthead('welcome') + spacer(1, 4) + heading('<b>Welcome to firefly.</b>') + '<div class="body">' +
-        '<p class="lead">Tell <b>firefly</b> which music you love and which you can’t stand. It finds the members whose taste is most like yours and passes along what they are listening to, the way a friend would.</p>' +
+      return masthead('welcome') + spacer(1, 4) + heading('<b>Welcome to HOMR.</b>') + '<div class="body">' +
+        '<p class="lead">Tell <b>HOMR</b> which music you love and which you can’t stand. It finds the members whose taste is most like yours and passes along what they are listening to, the way a friend would.</p>' +
         '<p class="lead">The more you rate, the better it knows you.</p>' +
-        '<ul><li><a href="' + href('recs') + '">See the artists picked for you</a><li><a href="' + href('me') + '">See what firefly knows about you</a>' +
+        '<ul><li><a href="' + href('recs') + '">See the artists picked for you</a><li><a href="' + href('me') + '">See what HOMR knows about you</a>' +
         '<li><a href="' + href('people') + '">Meet people with taste like yours</a><li><a href="' + href('buzz') + '">Hear the buzz</a></ul></div>';
     },
 
     me: function () {
       var ids = Object.keys(s.mine).sort(function (x, y) { return s.mine[y] - s.mine[x] || ARTISTS[x].name.localeCompare(ARTISTS[y].name); });
-      var h = masthead() + spacer(1, 4) + heading('<b>' + ME + ', this is what firefly knows about you.</b>') + '<div class="body">' +
+      var h = masthead() + spacer(1, 4) + heading('<b>' + ME + ', this is what HOMR knows about you.</b>') + '<div class="body">' +
         '<p class="lead">You have rated ' + ids.length + ' artists. An asterisk indicates your current rating; change any of them from the artist’s page.</p>' +
         '<table border="0" cellspacing="0" cellpadding="0" class="list">';
       var half = Math.ceil(Math.min(ids.length, 34) / 2);
@@ -308,7 +308,7 @@ function page(s, base, n, view, arg) {
   return (V[view] || V.recs)(arg);
 }
 
-/* Firefly's page, laid out in the original's pixels on Netscape's grey. */
+/* HOMR's page, laid out in the original's pixels on Netscape's grey. */
 const css =
   '.ff, .ff p, .ff td, .ff li { font-family: Times, "Times New Roman", serif; font-size: 17px; line-height: 22px; color: #000000; }\n' +
   '.ff a { color: #9a9a9c; }\n' +
@@ -341,7 +341,7 @@ function respond(s, req) {
   if (view === 'artist') arg = +arg;
   if (view === 'user') arg = decodeURIComponent(arg || '');
   return {
-    title: 'firefly',
+    title: 'HOMR',
     body: { bgcolor: '#c7c3cf', text: '#000000', link: '#9a9a9c', vlink: '#9a9a9c', alink: '#6f6f78' },
     css: css,
     html: '<center><table border="0" cellspacing="0" cellpadding="0" width="635" class="ff"><tr><td>' + spacer(1, 8) + '<br>' +

@@ -121,13 +121,16 @@ const PROTOS = [
   { key: 'kasbah', thumb: 'thumb-kasbah.jpg', name: 'Kasbah', who: 'Anthony Chavez & Pattie Maes', what: 'A marketplace where your agent does the haggling for you.' }
 ];
 
-/* The start page's music (classic/tools/make_music.py). Browsers of the time
-   played MIDI through a plug-in, on the Mac QuickTime's; <bgsound> is for
-   Internet Explorer without one. It plays on the start page only: each
-   prototype page reloads, which would start it again every time. */
+/* The start page's music: two minutes of early-1990s computer music, made
+   with ElevenLabs' music model from classic/tools/music_request.json. It is
+   a plain MP3 (MPEG-1 Layer III, 128 kbps, 44.1 kHz, no ID3 tag), which the
+   browser hands to the QuickTime plug-in (QuickTime 4 and later, so every
+   Mac OS 9). <bgsound> is for Internet Explorer without a plug-in. It plays
+   on the start page only: each prototype page reloads, which would start it
+   again every time. */
 const MUSIC =
-  '<embed src="' + BASE + '/sound/agents.mid" type="audio/midi" autostart="true" autoplay="true" loop="true" hidden="true" width="2" height="2" volume="70">' +
-  '<noembed><bgsound src="' + BASE + '/sound/agents.mid" loop="infinite"></noembed>';
+  '<embed src="' + BASE + '/sound/agents.mp3" type="audio/mpeg" autostart="true" autoplay="true" loop="true" hidden="true" width="2" height="2" volume="70">' +
+  '<noembed><bgsound src="' + BASE + '/sound/agents.mp3" loop="infinite"></noembed>';
 
 function startPage(req) {
   var css =
@@ -170,7 +173,7 @@ function startPage(req) {
 // ---- HTTP --------------------------------------------------------------------------
 const IMG_DIR = path.join(__dirname, 'img');
 const SOUND_DIR = path.join(__dirname, 'sound');
-const TYPES = { '.gif': 'image/gif', '.jpg': 'image/jpeg', '.mid': 'audio/midi' };
+const TYPES = { '.gif': 'image/gif', '.jpg': 'image/jpeg', '.mp3': 'audio/mpeg' };
 
 function send(res, status, headers, body) {
   headers['Content-Length'] = Buffer.byteLength(body);
@@ -206,7 +209,7 @@ function handle(req, res) {
 
   if (parts[0] === '') return sendHtml(res, startPage(req));
 
-  if ((parts[0] === 'img' && /^[a-z0-9-]+\.(gif|jpg)$/.test(parts[1]) || parts[0] === 'sound' && /^[a-z0-9-]+\.mid$/.test(parts[1])) && parts.length === 2) {
+  if ((parts[0] === 'img' && /^[a-z0-9-]+\.(gif|jpg)$/.test(parts[1]) || parts[0] === 'sound' && /^[a-z0-9-]+\.mp3$/.test(parts[1])) && parts.length === 2) {
     return fs.readFile(path.join(parts[0] === 'img' ? IMG_DIR : SOUND_DIR, parts[1]), function (err, data) {
       if (err) return notFound(req, res);
       send(res, 200, { 'Content-Type': TYPES[path.extname(parts[1])], 'Cache-Control': 'max-age=86400' }, data);

@@ -141,7 +141,7 @@ def emacs(fonts):
 
 def firefly():
     GREY = (0xc7, 0xc3, 0xcf)
-    jpg(Image.open(src('assets', 'firefly', 'banner.png')).resize((557, 77), Image.LANCZOS), 'ff-banner.jpg', 88)
+    jpg(Image.open(src('assets', 'homr', 'banner.png')).resize((557, 77), Image.LANCZOS), 'ff-banner.jpg', 88)
     sp = Image.open(src('assets', 'firefly', 'spiral.png'))
     gif(sp.resize((102, round(102 * sp.height / sp.width)), Image.LANCZOS), 'ff-spiral.gif')
 

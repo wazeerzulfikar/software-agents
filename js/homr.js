@@ -1,5 +1,7 @@
 /* HOMR ("personal filters / personal critics"), which grew out of Ringo and
-   became Firefly. The screen is the Firefly-era page in the 1997 figure.
+   became Firefly. The screen is the Firefly-era page in the 1997 figure,
+   with HOMR's name on it: the demo calls it HOMR throughout, banner included
+   (tools/make_homr_banner.py).
 
    The page is the original one; behind it is a small working social
    information filter in the manner of Ringo (Shardanand & Maes, CHI 95):
@@ -80,7 +82,7 @@
     return { alias: alias, r: r };
   });
 
-  // What Firefly already knows about Finagler when the figure was captured.
+  // What HOMR already knows about Finagler when the figure was captured.
   var mine = {};
   [['Pink Floyd', 7], ['Dire Straits', 6], ['The Beatles', 6], ['Peter Gabriel', 6], ['Led Zeppelin', 5], ['R.E.M.', 6],
    ['Counting Crows', 5], ['Gin Blossoms', 5], ['Björk', 6], ['Pixies', 5], ['The Cure', 5], ['Paula Abdul', 2],
@@ -179,7 +181,7 @@
 
   function masthead(here) {
     function nav(k, t) { return '[<a data-go="' + k + '"' + (here === k ? ' class="here"' : '') + '>' + t + '</a>]'; }
-    return '<img class="banner" alt="firefly music" src="assets/firefly/banner.png">' +
+    return '<img class="banner" alt="HOMR music" src="assets/homr/banner.png">' +
       '<div class="banner-map"><a data-go="people" style="left:39px;width:185px"></a>' +
       '<a data-go="welcome" style="left:224px;width:190px"></a><a data-go="buzz" style="left:414px;width:182px"></a></div>' +
       '<div class="nav">' + nav('people', 'PEOPLE') + '<span></span>' + nav('welcome', 'WELCOME') + '<span></span>' + nav('buzz', 'BUZZ') + '</div>';
@@ -196,16 +198,16 @@
       });
       return h + '<div class="motif-btn send" data-act="send"><span>Submit and Send More</span></div>' +
         '<div class="dots"></div><img class="spiral" alt="" src="assets/firefly/spiral.png">' +
-        '<div class="tell">Tell <b>firefly</b><span class="tt">what you’re looking for</span></div>';
+        '<div class="tell">Tell <b>HOMR</b><span class="tt">what you’re looking for</span></div>';
     },
 
     artist: function (id) {
       var a = ARTISTS[id], p = predictFor(a), h = masthead();
       h += '<h2>' + esc(a.name) + '</h2><div class="body">';
       if (mine[id]) h += '<p class="lead">You gave ' + esc(a.name) + ' a ' + mine[id] + '.</p>';
-      else if (p) h += '<p class="lead"><b>firefly</b> thinks you would give ' + esc(a.name) + ' a <b>' + p.p.toFixed(1) +
+      else if (p) h += '<p class="lead"><b>HOMR</b> thinks you would give ' + esc(a.name) + ' a <b>' + p.p.toFixed(1) +
         '</b>. <span class="tt">(confidence: ' + confidence(p.n) + ')</span></p>';
-      else h += '<p class="lead"><b>firefly</b> does not know enough yet to guess what you would think of ' + esc(a.name) + '.</p>';
+      else h += '<p class="lead"><b>HOMR</b> does not know enough yet to guess what you would think of ' + esc(a.name) + '.</p>';
       h += '<div class="rate">' + option(id) + '<div class="motif-btn" data-act="rate" data-id="' + id + '"><span>Submit</span></div></div>';
 
       // Reviews from the members most like you who have an opinion.
@@ -235,7 +237,7 @@
 
     people: function () {
       var nb = neighbours().slice(0, 5), h = masthead('people') + '<h2><a data-go="me">' + ME + '</a>, You should meet these people.</h2><div class="body">' +
-        '<p class="lead">Their taste in music is the closest to yours. <b>firefly</b> draws on what they love when it picks artists for you.</p><table>';
+        '<p class="lead">Their taste in music is the closest to yours. <b>HOMR</b> draws on what they love when it picks artists for you.</p><table>';
       nb.forEach(function (x) {
         var raves = Object.keys(x.u.r).filter(function (k) { return x.u.r[k] === 7 && !mine[k]; }).slice(0, 2);
         h += '<tr><td class="big"><a data-user="' + x.u.alias + '">' + x.u.alias + '</a></td><td class="tt">' + Math.round(x.s * 100) + '% like you</td></tr>' +
@@ -262,7 +264,7 @@
         var s = 0, n = 0; USERS.forEach(function (u) { if (u.r[a.id]) { s += u.r[a.id]; n++; } });
         return { a: a, avg: n ? s / n : 0, n: n };
       }).filter(function (r) { return r.n >= 12; }).sort(function (x, y) { return y.avg - x.avg; }).slice(0, 12);
-      var h = masthead('buzz') + '<h2>The buzz.</h2><div class="body"><p class="lead">The artists <b>firefly</b> members rate most highly right now, whatever your own taste.</p><table>';
+      var h = masthead('buzz') + '<h2>The buzz.</h2><div class="body"><p class="lead">The artists <b>HOMR</b> members rate most highly right now, whatever your own taste.</p><table>';
       rows.forEach(function (r, i) {
         h += '<tr><td class="n">' + (i + 1) + '.</td><td class="big" style="font-size:18px;line-height:22px">' + artistLink(r.a) + '</td><td class="tt">' + r.avg.toFixed(1) + ' from ' + r.n + ' members</td></tr>';
       });
@@ -270,16 +272,16 @@
     },
 
     welcome: function () {
-      return masthead('welcome') + '<h2>Welcome to firefly.</h2><div class="body">' +
-        '<p class="lead">Tell <b>firefly</b> which music you love and which you can’t stand. It finds the members whose taste is most like yours and passes along what they are listening to, the way a friend would.</p>' +
+      return masthead('welcome') + '<h2>Welcome to HOMR.</h2><div class="body">' +
+        '<p class="lead">Tell <b>HOMR</b> which music you love and which you can’t stand. It finds the members whose taste is most like yours and passes along what they are listening to, the way a friend would.</p>' +
         '<p class="lead">The more you rate, the better it knows you.</p>' +
-        '<ul><li><a data-go="recs">See the artists picked for you</a></li><li><a data-go="me">See what firefly knows about you</a></li>' +
+        '<ul><li><a data-go="recs">See the artists picked for you</a></li><li><a data-go="me">See what HOMR knows about you</a></li>' +
         '<li><a data-go="people">Meet people with taste like yours</a></li><li><a data-go="buzz">Hear the buzz</a></li></ul></div>';
     },
 
     me: function () {
       var ids = Object.keys(mine).sort(function (x, y) { return mine[y] - mine[x] || ARTISTS[x].name.localeCompare(ARTISTS[y].name); });
-      var h = masthead() + '<h2>' + ME + ', this is what firefly knows about you.</h2><div class="body">' +
+      var h = masthead() + '<h2>' + ME + ', this is what HOMR knows about you.</h2><div class="body">' +
         '<p class="lead">You have rated ' + ids.length + ' artists. An asterisk indicates your current rating; change any of them from the artist’s page.</p>' +
         '<table style="font-size:15px;line-height:19px">';
       var half = Math.ceil(Math.min(ids.length, 34) / 2);

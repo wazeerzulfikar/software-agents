@@ -13,7 +13,7 @@ This was made as a keyboard-and-mouse exhibit for an MIT Media Lab alumni event.
 ### 1. HOMR
 *Upendra Shardanand, Max Metral & Pattie Maes, 1994–1996*
 
-Rate artists on the Firefly-era page and watch the recommendations change. HOMR finds the simulated members whose taste is closest to yours (constrained Pearson correlation on a 1–7 scale, as in Ringo) and predicts what you will like from theirs.
+Rate artists and watch the recommendations change. HOMR finds the simulated members whose taste is closest to yours (constrained Pearson correlation on a 1–7 scale, as in Ringo) and predicts what you will like from theirs.
 
 ### 2. Remembrance Agent
 *Bradley Rhodes & Thad Starner, 1996*
@@ -63,7 +63,7 @@ These browsers cannot run the modern version's JavaScript, so this version conta
 - **Pages reload themselves** while something is happening on its own: Kasbah's agent bargaining, or Yenta finding an interest or getting a reply.
 - **A prototype returns to the start page** after 5 minutes on the same page.
 - **Every page fits a small browser window,** about 780 by 520 pixels, without scrolling. The label over each prototype is shorter, and Kasbah's form is in two columns.
-- **The start page plays music**, an original loop in the style of early-1990s computer music. It is a MIDI file that the browser hands to QuickTime, as pages of the time did. It plays on the start page only.
+- **The start page plays music**: two minutes of early-1990s-style computer music, made with ElevenLabs' music model. It is a plain MP3 that the browser hands to QuickTime (version 4 or later, so any Mac OS 9). It plays on the start page only.
 
 To run it, with Node 18 or later and nothing to install:
 
@@ -96,11 +96,11 @@ On the exhibit's server, `classic/original-agents-classic.service` runs it under
 }
 ```
 
-The images in `classic/img/` are made from `assets/` and the start-page screenshot by `python3 classic/tools/make_images.py` (Pillow, and Chrome for Kasbah's menu bar). The music, `classic/sound/agents.mid`, is composed by `python3 classic/tools/make_music.py`.
+The images in `classic/img/` are made from `assets/` and the start-page screenshot by `python3 classic/tools/make_images.py` (Pillow, and Chrome for Kasbah's menu bar). The music, `classic/sound/agents.mp3`, came from ElevenLabs' music API (`music_v2_5`, MP3 at 44.1 kHz and 128 kbps) with the request in `classic/tools/music_request.json`. Its ID3 tag was removed, because it uses a version newer than the QuickTime of the time.
 
 ## How it is made
 
-- **Fidelity.** Layouts, colours and type are measured from the original figures and screenshots, not reconstructed from memory. Where the original artwork survives in a figure (the Firefly banner, Yenta's collage, Kasbah's welcome image), it is cut out and reused. Everything else is redrawn in HTML and CSS at the original screen size and enlarged.
+- **Fidelity.** Layouts, colours and type are measured from the original figures and screenshots, not reconstructed from memory. Where the original artwork survives in a figure (HOMR's banner, Yenta's collage, Kasbah's welcome image), it is cut out and reused. HOMR's screen is the Firefly-era page from the figure; the demo calls it HOMR throughout, so `tools/make_homr_banner.py` replaces the banner's "firefly" wordmark with "HOMR". The original is kept in `assets/firefly/`. Everything else is redrawn in HTML and CSS at the original screen size and enlarged.
 - **The Remembrance Agent** is drawn pixel by pixel on a canvas using the original X11 `misc-fixed` bitmap fonts. The text buffer is a small working editor, and the agent is a small working retrieval engine that searches three scopes around the cursor, as the paper describes.
 - **The content is invented.** The music ratings, the Remembrance Agent's e-mail and notes, Yenta's messages and Kasbah's buyers are made up for the exhibit, written to be plausible for the mid-1990s. Anything presented as a quotation or a historical fact has been checked against the papers in `references/`.
 - **Every visitor sees the same world.** Simulated members and buyers come from a seeded random number generator.
@@ -119,9 +119,10 @@ js/                 shell.js (scaling, navigation, idle reset) and one script pe
                     ra-corpus.js   the Remembrance Agent's e-mail and notes
                     xfonts.js      X11 misc-fixed bitmap fonts
 classic/            the version for 1990s browsers: server.js and one module per prototype,
-                    img/ (GIF and JPEG), sound/ (the start page's MIDI music),
-                    tools/ (make_images.py, make_music.py), and a systemd unit
-assets/             images cut from the original figures, and the period fonts
+                    img/ (GIF and JPEG), sound/ (the start page's music),
+                    tools/ (make_images.py, music_request.json), and a systemd unit
+tools/              make_homr_banner.py: HOMR's banner, from the figure's firefly banner
+assets/             images cut from the original figures (homr/banner.png is the one changed), and the period fonts
 references/         the papers the prototypes are based on
 screenshots/        the start page image above (other screenshots stay local)
 ```
