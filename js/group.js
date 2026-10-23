@@ -315,14 +315,15 @@
     function arrival(p) { return p.spans ? time(p.spans[0][0]) : D.now; }
     themes = { el: el('div', 'gt', stage), cols: [], at: -1 };
     px(themes.el, 0, 0, 1920, 1080);
-    el('h2', 'gt-title', themes.el, 'Conversations to have');
-    el('p', 'gt-lede', themes.el, 'Five threads run through the group\u2019s work, from 1989 to today. ' +
-      'The people on each one worked on related ideas, often decades apart. Find each other.');
-    var n = D.themes.length, gap = 44, w = (1920 - 2 * NAME_LEFT - gap * (n - 1)) / n;
+    el('h2', 'gt-title', themes.el, 'Themes');
+    el('p', 'gt-lede', themes.el, 'Threads that run through the group\u2019s work from 1989 to today, ' +
+      'each with the people whose work touched it, often decades apart.');
+    // five to a row
+    var per = Math.min(5, D.themes.length), gap = 44, w = (1920 - 2 * NAME_LEFT - gap * (per - 1)) / per;
     D.themes.forEach(function (t, i) {
       var c = el('section', 'gt-col', themes.el);
-      px(c, NAME_LEFT + i * (w + gap), 226, w);
-      c.style.transitionDelay = (0.5 + i * 0.14) + 's';
+      px(c, NAME_LEFT + (i % per) * (w + gap), 206 + Math.floor(i / per) * 404, w);
+      c.style.transitionDelay = (0.5 + i * 0.09) + 's';
       el('div', 'gt-num', c, (i < 9 ? '0' : '') + (i + 1));
       el('div', 'gt-rule', c);
       el('h3', 'gt-name', c, t.title);
@@ -369,7 +370,7 @@
   }
 
   function backToTimeline() {
-    switcher.textContent = 'Conversations to have\u2002\u2192';
+    switcher.textContent = 'Themes\u2002\u2192';
     // set the timeline back to empty while it is still hidden, then let it come in again
     root.classList.add('snap');
     root.classList.remove('in', 'sweeping');
@@ -388,7 +389,7 @@
   // ---------- jumping from one page to the other by hand ----------
   var switcher;
   function buildSwitch() {
-    switcher = el('button', 'gp-switch', stage, 'Conversations to have\u2002\u2192');
+    switcher = el('button', 'gp-switch', stage, 'Themes\u2002\u2192');
     switcher.type = 'button';
     switcher.addEventListener('click', function () {
       run++;

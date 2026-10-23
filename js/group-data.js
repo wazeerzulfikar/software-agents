@@ -18,7 +18,7 @@ window.GROUP = {
   // Switches for the installation.
   config: {
     themes: true,          // after each walk through the years, show the themes page
-    themesSeconds: 45      // and stay on it this long before coming back
+    themesSeconds: 50      // and stay on it this long before coming back
   },
 
   // What Pattie's group was called, from the Media Lab's own lists of groups
@@ -176,31 +176,41 @@ window.GROUP = {
     { name: 'Cristina Velasquez Cobos', role: 'Graduate student', word: 'Slow-wave sleep' }
   ],
 
-  // The themes page: five threads that run through the group's work, each
-  // gathering people who worked on related ideas, often decades apart, and so
-  // might have a good conversation. Everyone is on one thread, people in the
-  // group now last; each is shown with the word from their row unless the
-  // thread gives them another.
+  // The themes page: threads that run through the group's work, each with
+  // the four or five people whose work touched it, often decades apart.
+  // Everyone is on one thread, people in the group now last; each is shown
+  // with the word from their row unless the thread gives them another.
   themes: [
-    { title: 'Agents that know what you like',
-      about: 'Recommenders, filters and matchmakers, the traces people leave, and wearables that learn their wearer.',
-      people: ['Max Metral', 'Upendra Shardanand', 'Henry Lieberman', 'Leonard Foner',
-               'Alexandros Moukas', 'Alan Wexelblat', 'Aaron Zinman', 'Yasith Samaradivakara'] },
-    { title: 'Agents that act on your behalf',
-      about: 'Marketplaces where agents negotiate, set prices and earn trust, and agents that carry out everyday tasks.',
-      people: ['Robert Guttman', 'Nelson Minar', 'Giorgos Zacharia', 'Daniele De Francesco',
-               'Joan Morris DiMicco', 'Jim Cruz-Youll', { name: 'Taya Leary', word: 'Behavioural economics' }, 'Manasi Vaidya'] },
-    { title: 'People, characters and AI',
-      about: 'Synthetic characters and companions, points of view, and learning and reasoning alongside AI.',
-      people: ['Bruce Blumberg', 'Michael Best', 'Hugo Liu', 'Pat Pataranutaporn', 'Caitlin Morris',
-               'Laura Perovich', 'Joanne Leong', 'Valdemar Danry', 'Auren Liu', 'Hyung Woon Lee'] },
-    { title: 'The world as the interface',
-      about: 'Computing moved into objects, rooms, plants, robots and the body.',
-      people: ['David Merrill', 'Seth Hunter', 'Suranga Nanayakkara', 'Anette von Kapri', 'Valentin Heun',
-               'Anirudh Sharma', 'Sang-won Leigh', 'Dhairya Dand', 'Harpreet Sareen', 'Arnav Kapur'] },
-    { title: 'Memory, sleep and the mind',
-      about: 'Remembering, dreaming, attention and inner states, and the devices that support them.',
-      people: ['Judith Amores', 'Nataliya Kosmyna', 'Adam Haar Horowitz', 'Abhinandan Jain', 'Samantha Chan',
-               'Natasha Maniar', 'Kye Shimizu', 'Wazeer Zulfikar', 'Nathan Whitmore', 'Cristina Velasquez Cobos'] }
+    { title: 'Agents that learn your taste',
+      about: 'Recommenders and filters that learn what you like.',
+      people: ['Max Metral', 'Upendra Shardanand', 'Henry Lieberman', 'Alexandros Moukas', 'Hugo Liu'] },
+    { title: 'Agents you can trust',
+      about: 'Matchmaking, reputation, decentralised agents, and agents that act for you.',
+      people: ['Leonard Foner', 'Nelson Minar', 'Giorgos Zacharia', 'Manasi Vaidya'] },
+    { title: 'Agents in the marketplace',
+      about: 'Agents that shop, negotiate and set prices, and how people choose.',
+      people: ['Robert Guttman', 'Daniele De Francesco', 'Joan Morris DiMicco', 'Jim Cruz-Youll',
+               { name: 'Taya Leary', word: 'Behavioural economics' }] },
+    { title: 'The traces people leave',
+      about: 'What browsing, writing and everyday signals say about people.',
+      people: ['Alan Wexelblat', 'Michael Best', 'Aaron Zinman', 'Yasith Samaradivakara'] },
+    { title: 'Characters and companions',
+      about: 'Synthetic creatures, AI characters and companions, and play at a distance.',
+      people: ['Bruce Blumberg', 'Seth Hunter', 'Pat Pataranutaporn', 'Auren Liu'] },
+    { title: 'Thinking with AI',
+      about: 'Tools that help people learn, reason and stay curious.',
+      people: ['Dhairya Dand', 'Caitlin Morris', 'Joanne Leong', 'Valdemar Danry', 'Hyung Woon Lee'] },
+    { title: 'Objects, places and AR',
+      about: 'Computing moved into objects, rooms, tools and data you can touch.',
+      people: ['David Merrill', 'Anette von Kapri', 'Valentin Heun', 'Anirudh Sharma', 'Laura Perovich'] },
+    { title: 'Bodies and new senses',
+      about: 'Wearables that see, speak and move with the body, and plants that sense.',
+      people: ['Suranga Nanayakkara', 'Sang-won Leigh', 'Harpreet Sareen', 'Arnav Kapur', 'Kye Shimizu'] },
+    { title: 'Memory and the brain',
+      about: 'Augmenting memory, and reading the brain.',
+      people: ['Nataliya Kosmyna', 'Samantha Chan', 'Natasha Maniar', 'Wazeer Zulfikar', 'Nathan Whitmore'] },
+    { title: 'Sleep and dreams',
+      about: 'Shaping sleep and dreams, and listening to the body\u2019s own signals.',
+      people: ['Judith Amores', 'Adam Haar Horowitz', 'Abhinandan Jain', 'Cristina Velasquez Cobos'] }
   ]
 };
