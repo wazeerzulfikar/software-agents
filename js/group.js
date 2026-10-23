@@ -128,6 +128,7 @@
     px(tag, null, AXIS_Y - 3);
 
     var pitch = (ROWS_BOTTOM - ROWS_TOP - PI_GAP) / rows.length;
+    BAR_H = Math.min(18, Math.round(pitch - 5));   // the more people, the slimmer the bars
     rows.forEach(function (r, i) {
       var p = r.p;
       var top = ROWS_TOP + i * pitch + (i ? PI_GAP : 0);
