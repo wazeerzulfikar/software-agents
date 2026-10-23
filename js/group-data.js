@@ -173,7 +173,8 @@ window.GROUP = {
     { name: 'Hyung Woon Lee', role: 'Graduate student', word: 'Wearable AI for learning' },
     { name: 'Manasi Vaidya', role: 'Graduate student', word: 'Agents for older adults' },
     { name: 'Nathan Whitmore', role: 'Research scientist', word: 'Sleep & memory' },
-    { name: 'Cristina Velasquez Cobos', role: 'Graduate student', word: 'Slow-wave sleep' }
+    { name: 'Cristina Velasquez Cobos', role: 'Graduate student', word: 'Slow-wave sleep' },
+    { name: 'Cathy Fang', role: 'PhD student', word: 'AI and wellbeing' }
   ],
 
   // The themes page: threads that run through the group's work, each with
@@ -196,7 +197,7 @@ window.GROUP = {
       people: ['Alan Wexelblat', 'Michael Best', 'Aaron Zinman', 'Yasith Samaradivakara'] },
     { title: 'Characters and companions',
       about: 'Synthetic creatures, AI characters and companions, and play at a distance.',
-      people: ['Bruce Blumberg', 'Seth Hunter', 'Pat Pataranutaporn', 'Auren Liu'] },
+      people: ['Bruce Blumberg', 'Seth Hunter', 'Pat Pataranutaporn', 'Auren Liu', 'Cathy Fang'] },
     { title: 'Thinking with AI',
       about: 'Tools that help people learn, reason and stay curious.',
       people: ['Dhairya Dand', 'Caitlin Morris', 'Joanne Leong', 'Valdemar Danry', 'Hyung Woon Lee'] },
