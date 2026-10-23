@@ -1,0 +1,230 @@
+/* Pattie Maes's group, 1989 to now: a timeline for the alumni event.
+   One row per person, years running left to right. A yellow line walks
+   through the years on its own, lighting up whoever was in the group then.
+   Positions are on the 1920x1080 stage; js/group.js places the marks. */
+
+.gp-kicker {
+  left: 68px;
+  top: 44px;
+  font: 500 15px/20px var(--sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lilac);
+  white-space: nowrap;
+}
+.gp-range {
+  left: 64px;
+  top: 74px;
+  margin: 0;
+  font: 400 64px/64px var(--serif);
+  letter-spacing: -0.01em;
+  color: var(--yellow);
+  white-space: nowrap;
+}
+
+/* ---------- the group's names, along the top ---------- */
+.gp-era { position: absolute; }
+.gp-era .yr {
+  position: absolute;
+  left: 1px;
+  top: 0;
+  font: 500 13px/20px var(--sans);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--lilac);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.gp-era .rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 24px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(185, 183, 234, 0.45);
+  transition: background-color 0.6s;
+}
+.gp-era .nm {
+  position: absolute;
+  left: 0;
+  top: 35px;
+  font: 400 32px/34px var(--serif);
+  color: #fff;
+  white-space: nowrap;
+  transition: color 0.6s, opacity 0.6s;
+}
+.gp-era .nm.wrap { white-space: normal; }
+.gp-era.tight .nm { display: none; }
+.gp-era.tight .yr { left: auto; right: 0; transition: color 0.6s; }
+.gp.sweeping .gp-era.tight.on .yr { color: var(--yellow); }
+.gp-era .logo { position: absolute; left: 0; display: block; transition: opacity 0.6s; }
+.gp.sweeping .gp-era .nm,
+.gp.sweeping .gp-era .logo { opacity: 0.5; }
+.gp.sweeping .gp-era.on .nm { opacity: 1; color: var(--yellow); }
+.gp.sweeping .gp-era.on .logo { opacity: 1; }
+.gp.sweeping .gp-era.on .rule { background: var(--yellow); }
+
+/* ---------- year axis and grid ---------- */
+.gp-grid { position: absolute; top: 0; width: 1px; background: rgba(255, 255, 255, 0.05); }
+.gp-grid.major { background: rgba(255, 255, 255, 0.1); }
+.gp-grid.era { background: rgba(185, 183, 234, 0.34); }
+.gp-year {
+  position: absolute;
+  transform: translateX(-50%);
+  font: 500 15px/20px var(--sans);
+  letter-spacing: 0.06em;
+  color: var(--lilac);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: opacity 0.3s;
+}
+
+/* ---------- rows ---------- */
+.gp-name {
+  position: absolute;
+  left: 68px;
+  font: 400 21px/24px var(--serif);
+  color: #fff;
+  white-space: nowrap;
+  transition: opacity 0.5s, color 0.5s;
+}
+.gp-role {
+  position: absolute;
+  font: 500 11.5px/24px var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lilac);
+  white-space: nowrap;
+  transition: opacity 0.5s;
+}
+.gp-row.pi .gp-name { color: var(--yellow); }
+
+.gp-bar {
+  position: absolute;
+  border-radius: 4px;
+  background: rgba(185, 183, 234, 0.3);
+  transform-origin: 0 50%;
+  transition: background-color 0.45s;
+}
+/* still going today: the bar fades out instead of ending */
+.gp-bar.open { border-radius: 4px 0 0 4px; -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 46px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 46px), transparent); }
+/* time at the Media Lab leading a group of one's own: an outline, never lit */
+.gp-bar.own { background: none; box-shadow: inset 0 0 0 1.5px rgba(185, 183, 234, 0.55); }
+.gp-bar .join { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(47, 45, 118, 0.5); }
+.gp-word {
+  position: absolute;
+  font: 500 13.5px/17px var(--sans);
+  letter-spacing: 0.01em;
+  color: #fff;
+  white-space: nowrap;
+  transition: color 0.45s, opacity 0.5s;
+}
+.gp-word.out { color: #dcdbf4; }
+.gp-word.quiet { font-weight: 400; font-style: italic; color: var(--lilac); }
+
+/* While the line walks through the years, the people who were in the group
+   that year light up and everyone else steps back. */
+.gp.sweeping .gp-row .gp-name,
+.gp.sweeping .gp-row .gp-word.out { opacity: 0.42; }
+.gp.sweeping .gp-row .gp-role { opacity: 0.4; }
+.gp.sweeping .gp-row .gp-bar { background: rgba(185, 183, 234, 0.2); }
+.gp.sweeping .gp-row .gp-bar.own { background: none; }
+.gp.sweeping .gp-row.on .gp-name,
+.gp.sweeping .gp-row.on .gp-word.out { opacity: 1; }
+.gp.sweeping .gp-row.on .gp-role { opacity: 1; }
+.gp.sweeping .gp-row .gp-bar.on { background: var(--yellow); }
+.gp.sweeping .gp-row .gp-word.on { color: var(--indigo-deep); }
+
+.gp-sep { position: absolute; left: 68px; right: 68px; height: 1px; background: rgba(185, 183, 234, 0.28); }
+
+/* ---------- the walking line ---------- */
+.gp-head {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  opacity: 0;
+  transition: opacity 0.8s;
+  will-change: transform;
+}
+.gp-head.on { opacity: 1; }
+.gp-head .line { position: absolute; left: -1px; width: 2px; background: var(--yellow); }
+.gp-head .tag {
+  position: absolute;
+  transform: translateX(-50%);
+  padding: 0 9px;
+  border-radius: 3px;
+  background: var(--yellow);
+  font: 700 16px/26px var(--sans);
+  letter-spacing: 0.04em;
+  color: var(--indigo-deep);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- along the foot ---------- */
+.gp-foot {
+  left: 68px;
+  top: 1044px;
+  font: italic 400 18px/22px var(--serif);
+  color: var(--lilac);
+  white-space: nowrap;
+}
+.gp-key { margin-left: 44px; }
+.gp-key i {
+  display: inline-block;
+  width: 34px;
+  height: 15px;
+  margin-right: 10px;
+  vertical-align: -2px;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1.5px rgba(185, 183, 234, 0.55);
+}
+
+.gp-music {
+  right: 58px;
+  top: 1030px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--yellow);
+  transition: color 0.3s, opacity 0.3s;
+}
+.gp-music svg { display: block; width: 48px; height: 48px; }
+.gp-music .slash { opacity: 0; transition: opacity 0.3s; }
+.gp-music.off { color: var(--lilac); opacity: 0.6; }
+.gp-music.off .slash { opacity: 1; }
+.gp-music.waiting { color: var(--lilac); }
+.gp-music-hint {
+  right: 116px;
+  top: 1043px;
+  padding-left: 40px;
+  background: var(--indigo);
+  font: 500 13px/24px var(--sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lilac);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.gp-music-hint.on { opacity: 1; }
+
+/* ---------- coming in ---------- */
+.gp .gp-bar { transform: scaleX(0); transition: transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1), background-color 0.45s; }
+.gp .gp-name, .gp .gp-role, .gp .gp-word, .gp-era, .gp-year, .gp-sep, .gp-grid { opacity: 0; }
+.gp.in .gp-bar { transform: scaleX(1); }
+.gp.in .gp-name, .gp.in .gp-role, .gp.in .gp-word, .gp.in .gp-era, .gp.in .gp-sep, .gp.in .gp-grid, .gp.in .gp-year { opacity: 1; }
+.gp.in .gp-era, .gp.in .gp-grid, .gp.in .gp-sep { transition: opacity 1.2s; }
+
+.gp.snap, .gp.snap * { transition: none !important; }
+
+/* Nobody is at the controls of an installation: hide the pointer until it moves. */
+html.still, html.still * { cursor: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gp .gp-bar, .gp .gp-name, .gp .gp-role, .gp .gp-word, .gp-era, .gp-year { transition: none !important; }
+}

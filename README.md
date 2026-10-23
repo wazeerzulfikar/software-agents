@@ -53,6 +53,16 @@ Every page is laid out on a 1920×1080 stage that scales to fit the window, so i
 | `?idle=30` | Sets the idle timeout in seconds (minimum 20), for testing it. |
 | `?thumb` | Renders a prototype as the live preview used on the start page. |
 
+## Pattie Maes and her group
+
+`group.html` is a second, separate installation: a screen that runs on its own, with nothing to use. It is a timeline of the people in Pattie Maes's group at the Media Lab from 1989 to today. Each row is one person, with a bar for the years they were in the group and, inside it, a word or two for what they worked on. Along the top are the names the group went by. A yellow line walks through the years, a year a second, lighting up whoever was in the group that year and the name the group had then. It rests at today, then starts again. The music is "Return To Light", on a loop, and the note in the corner switches it off and on.
+
+To show it, double-click `group.command`. It opens the page full-screen in Chrome with the music allowed to start on its own; in an ordinary browser the music waits for a first click. It needs a modern browser and runs on the same 1920×1080 stage as the exhibit.
+
+The people, their years and their words are in `js/group-data.js`, one entry each, with a note on what is documented and what is estimated. Degree months come from the thesis title pages in MIT's DSpace; arrivals come from CVs, theses and the group's people pages in the Wayback Machine, and default to September where only the year is known. Rows are sorted by arrival when drawn, and the layout makes room for whatever names and roles the file holds. An outlined bar marks years someone spent leading their own group at the Lab.
+
+`?still` shows the chart without the walking line, `?at=1997.5` holds the line at a year, and `?nointro` skips the bars growing in. The music is `sound/return-to-light.mp3`, converted from `assets/Return_To_Light_2026-10-23T174508.wav` (kept out of the repository) with `ffmpeg -i assets/Return_To_Light_2026-10-23T174508.wav -ar 44100 -c:a libmp3lame -b:a 160k -map_metadata -1 sound/return-to-light.mp3`.
+
 ## On Mac OS 9 and other 1990s browsers
 
 The exhibit above needs a modern browser. The `classic/` folder holds a second version of all four prototypes for the browsers of the time: Internet Explorer 5 and Netscape 4 on Mac OS 9, iCab, Classilla, and older browsers back to Netscape 3. It is tested in Netscape Navigator 4 and Internet Explorer 4 for the Mac, on [oldweb.today](https://oldweb.today/).
@@ -115,10 +125,14 @@ remembrance.html    prototype 2
 yenta.html          prototype 3
 kasbah.html         prototype 4
 start.command       opens the exhibit in Chrome kiosk mode (macOS)
-css/                shell.css (shared) and one stylesheet per prototype
-js/                 shell.js (scaling, navigation, idle reset) and one script per prototype
+group.html          Pattie Maes and her group, the timeline installation
+group.command       opens the timeline in Chrome kiosk mode, music on (macOS)
+css/                shell.css (shared) and one stylesheet per page
+js/                 shell.js (scaling, navigation, idle reset) and one script per page
                     ra-corpus.js   the Remembrance Agent's e-mail and notes
                     xfonts.js      X11 misc-fixed bitmap fonts
+                    group-data.js  the people, years and words on the timeline
+sound/              the timeline's music
 classic/            the version for 1990s browsers: server.js and one module per prototype,
                     img/ (GIF and JPEG), sound/ (the start page's music),
                     tools/make_images.py, and a systemd unit
