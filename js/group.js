@@ -3,8 +3,9 @@
    walks through the years, lighting up whoever was in the group that year,
    rests at today, and starts again. If config.themes is on, the timeline
    gives way after each walk to a page of themes, the threads that run through
-   the group's work with the people on each, and then comes back. The music
-   switch is the only control.
+   the group's work with the people on each, and then comes back. A button
+   in the corner jumps from one page to the other; the music switch is the
+   only other control.
 
    ?still          no walking line (for screenshots)
    ?at=1997.5      hold the line at that year
@@ -20,7 +21,7 @@
   // The stage: names on the left, then the years from X0 to X1. X0 is set
   // once the names are measured, so the years get all the room there is.
   var NAME_LEFT = 68, X0, X1 = 1852;
-  var ERA_TOP = 44, NAME_TOP = 35, LOGO_H = 34;
+  var ERA_TOP = 44, NAME_TOP = 35;
   var AXIS_Y, ROWS_TOP, ROWS_BOTTOM = 1030, PI_GAP = 10;
   var BAR_H = 18, WORD_H = 17, PAD = 5, WORD_SIZES = [13.5, 12.5, 11.5];
   var YEAR_MS = 1000;            // the line walks a year a second
@@ -56,6 +57,7 @@
   // the years someone was in the group, for the themes page: '1992–1995'
   // (stays less than a year apart count as one; longer gaps show)
   function tenure(p) {
+    if (!p.spans) return 'now';
     var ranges = [];
     p.spans.filter(function (s) { return !s[2]; }).forEach(function (s) {
       var a = time(s[0]), b = time(s[1]), last = ranges[ranges.length - 1];
@@ -67,6 +69,11 @@
       return a === b ? String(a) : a + '\u2013' + b;
     }).join(', ');
   }
+  // Everything the loop schedules goes through later(), tied to the current
+  // run; switching pages by hand starts a new run, so nothing stale fires.
+  var run = 0;
+  function later(fn, ms) { var r = run; return setTimeout(function () { if (r === run) fn(); }, ms); }
+
   // a delay that belongs to the coming in, kept so the coming in can be replayed
   function delay(e, value) { e.dataset.delay = value; e.style.transitionDelay = value; }
 
@@ -96,8 +103,7 @@
     rows.forEach(function (r) { roleRight = Math.max(roleRight, NAME_LEFT + r.name.offsetWidth + 18 + r.role.offsetWidth); });
     X0 = Math.ceil(roleRight) + 30;
 
-    // what the group was called, along the top, with its logo if it had one
-    var logoH = Math.max.apply(null, [0].concat(D.eras.map(function (era) { return era.logo ? era.logo.h || LOGO_H : 0; })));
+    // what the group was called, along the top
     D.eras.forEach(function (era) {
       var a = time(era.from), b = time(era.to);
       var e = el('div', 'gp-era', back);
@@ -107,7 +113,7 @@
       var nm = el('div', 'nm', e, era.name);
       // a name too long for its years breaks onto two lines
       if (nm.offsetWidth > e.offsetWidth) { nm.classList.add('wrap'); nm.style.width = e.offsetWidth + 'px'; }
-      eras.push({ a: a, b: b, el: e, nm: nm, logo: era.logo });
+      eras.push({ a: a, b: b, el: e, nm: nm });
     });
     // A name the group had for only a year or so cannot fit under its rule.
     // It is lifted above the band instead, in small capitals with its years,
@@ -124,14 +130,7 @@
       eras.forEach(function (e) { e.nm.style.fontSize = (size - 1) + 'px'; e.nm.style.lineHeight = Math.round((size - 1) * 1.06) + 'px'; });
     }
     var nameH = Math.max.apply(null, eras.map(function (e) { return e.nm.offsetHeight; }));
-    eras.forEach(function (e) {
-      if (!e.logo) return;
-      var img = el('img', 'logo' + (e.logo.invert ? ' invert' : ''), e.el);
-      img.src = e.logo.src;
-      img.alt = '';
-      px(img, null, NAME_TOP + nameH + 10, null, e.logo.h || LOGO_H);
-    });
-    AXIS_Y = ERA_TOP + NAME_TOP + nameH + 18 + (logoH ? logoH + 14 : 0);
+    AXIS_Y = ERA_TOP + NAME_TOP + nameH + 18;
     ROWS_TOP = AXIS_Y + 30;
     var gridTop = AXIS_Y + 26;
 
@@ -275,23 +274,28 @@
   }
 
   function sweep() {
-    var start = D.from;
+    var start = D.from, r = run;
     var t0 = performance.now();
     root.classList.add('sweeping');
     head.classList.add('on');
     function frame(now) {
+      if (r !== run) return;
       var t = Math.min(D.now, start + (now - t0) / YEAR_MS);
       setYear(t);
       if (t < D.now) return requestAnimationFrame(frame);
-      setTimeout(function () {
+      later(function () {
         if (THEMES) return showThemes();
-        root.classList.remove('sweeping');
-        head.classList.remove('on');
-        clearYear();
-        setTimeout(sweep, REST_MS);
+        stopSweep();
+        later(sweep, REST_MS);
       }, HOLD_MS);
     }
     requestAnimationFrame(frame);
+  }
+
+  function stopSweep() {
+    root.classList.remove('sweeping');
+    head.classList.remove('on');
+    clearYear();
   }
 
   // ---------- coming in ----------
@@ -307,7 +311,8 @@
   // ---------- the themes page ----------
   function buildThemes() {
     var byName = {};
-    D.people.forEach(function (p) { byName[p.name] = p; });
+    D.people.concat(D.current || []).forEach(function (p) { byName[p.name] = p; });
+    function arrival(p) { return p.spans ? time(p.spans[0][0]) : D.now; }
     themes = { el: el('div', 'gt', stage), cols: [], at: -1 };
     px(themes.el, 0, 0, 1920, 1080);
     el('h2', 'gt-title', themes.el, 'Conversations to have');
@@ -326,7 +331,7 @@
       t.people.map(function (entry) {
         var p = byName[typeof entry === 'string' ? entry : entry.name];
         return p && { p: p, word: (entry.word || p.word || '') };
-      }).filter(Boolean).sort(function (u, v) { return time(u.p.spans[0][0]) - time(v.p.spans[0][0]); })
+      }).filter(Boolean).sort(function (u, v) { return arrival(u.p) - arrival(v.p); })
         .forEach(function (u) {
           var li = el('li', '', list);
           el('span', 'who', li, u.p.name);
@@ -345,6 +350,7 @@
 
   function showThemes(stay) {
     stage.classList.add('themes');
+    switcher.textContent = '\u2190\u2002The timeline';
     var each = THEMES_MS / themes.cols.length, i = 0;
     spotlight(0);
     themes.fill.style.transition = 'none';
@@ -352,18 +358,18 @@
     themes.fill.offsetWidth;
     themes.fill.style.transition = 'transform ' + THEMES_MS + 'ms linear';
     themes.fill.style.transform = stay ? 'scaleX(0)' : 'scaleX(1)';
-    var tick = setInterval(function () {
-      i = (i + 1) % themes.cols.length;
-      spotlight(i);
-    }, each);
-    if (stay) return;
-    setTimeout(function () {
-      clearInterval(tick);
-      backToTimeline();
-    }, THEMES_MS);
+    (function next() {
+      later(function () {
+        i = (i + 1) % themes.cols.length;
+        spotlight(i);
+        next();
+      }, each);
+    })();
+    if (!stay) later(backToTimeline, THEMES_MS);
   }
 
   function backToTimeline() {
+    switcher.textContent = 'Conversations to have\u2002\u2192';
     // set the timeline back to empty while it is still hidden, then let it come in again
     root.classList.add('snap');
     root.classList.remove('in', 'sweeping');
@@ -375,7 +381,19 @@
       stage.classList.remove('themes');
       themes.cols.forEach(function (c) { c.classList.remove('on'); });
       intro();
-      setTimeout(sweep, INTRO_MS);
+      later(sweep, INTRO_MS);
+    });
+  }
+
+  // ---------- jumping from one page to the other by hand ----------
+  var switcher;
+  function buildSwitch() {
+    switcher = el('button', 'gp-switch', stage, 'Conversations to have\u2002\u2192');
+    switcher.type = 'button';
+    switcher.addEventListener('click', function () {
+      run++;
+      if (stage.classList.contains('themes')) backToTimeline();
+      else { stopSweep(); showThemes(); }
     });
   }
 
@@ -410,10 +428,10 @@
         // ?nointro only skips the coming in; the walking line still eases
         if (!STILL && AT == null) setTimeout(function () { root.classList.remove('snap'); }, 200);
       }
-      if (THEMES || SHOW_THEMES) buildThemes();
+      if (D.themes && D.themes.length) { buildThemes(); buildSwitch(); }
       requestAnimationFrame(function () {
         intro();
-        if (SHOW_THEMES) {
+        if (SHOW_THEMES && themes) {
           if (STILL) stage.classList.add('snap');
           showThemes(true);
         } else if (AT != null) {
@@ -421,7 +439,7 @@
           head.classList.add('on');
           setYear(AT);
         } else if (!STILL) {
-          setTimeout(sweep, params.has('nointro') ? 1500 : INTRO_MS);
+          later(sweep, params.has('nointro') ? 1500 : INTRO_MS);
         }
       });
     });
@@ -432,16 +450,13 @@
 
 /* The music: "Return To Light", on a loop (sound/return-to-light.mp3, made
    from assets/Return_To_Light_*.wav). It fades in and out. A browser may refuse to start
-   sound before anyone has clicked; then the first click anywhere starts it.
-   (group.command opens the page in Chrome with that rule lifted.) The choice
-   to switch it off is remembered in this browser. */
+   sound before anyone has clicked or pressed a key; then the first click or
+   key anywhere starts it. (group.command opens the page in Chrome with that
+   rule lifted.) It is on whenever the page opens; the switch lasts until the
+   page is reloaded. */
 (function () {
-  var KEY = 'group-music';
   var VOLUME = 0.8;
-  var audio, button, hint, fadeT;
-
-  function remembered() { try { return localStorage.getItem(KEY) !== 'off'; } catch (e) { return true; } }
-  function remember(on) { try { localStorage.setItem(KEY, on ? 'on' : 'off'); } catch (e) { /* private window */ } }
+  var audio, button, hint, fadeT, wanted = true;
 
   function fade(to, ms, done) {
     cancelAnimationFrame(fadeT);
@@ -465,11 +480,12 @@
     show('on');
     if (p && p.catch) p.catch(function () {
       show('waiting');
-      window.addEventListener('pointerdown', function first(e) {
-        window.removeEventListener('pointerdown', first, true);
+      function first(e) {
+        ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) { window.removeEventListener(type, first, true); });
         if (e.target.closest && e.target.closest('.gp-music')) return;   // the switch handles its own click
-        if (remembered()) play();
-      }, true);
+        if (wanted) play();
+      }
+      ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) { window.addEventListener(type, first, true); });
     });
     fade(VOLUME, 2500);
   }
@@ -502,11 +518,10 @@
     button.setAttribute('aria-label', 'Music');
     stage.appendChild(button);
     button.addEventListener('click', function () {
-      var on = !button.classList.contains('on');
-      remember(on);
-      if (on) play(); else stop();
+      wanted = !button.classList.contains('on');
+      if (wanted) play(); else stop();
     });
 
-    if (remembered()) play(); else show('off');
+    play();
   });
 })();

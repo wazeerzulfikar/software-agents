@@ -26,15 +26,13 @@ window.GROUP = {
   // 1996, Software Agents until June 2001, when Henry Lieberman took the group
   // (and its name) on. Pattie came back from leave to a new group, Interactive
   // Experience (October 2003), renamed Ambient Intelligence in September 2004
-  // and Fluid Interfaces in November 2008. Only two had a logo.
+  // and Fluid Interfaces in November 2008.
   eras: [
     { name: 'Autonomous Agents', from: '1991-09', to: '1997-01', years: '1991–1996' },
-    { name: 'Software Agents', from: '1997-01', to: '2001-06', years: '1997–2001',
-      logo: { src: 'assets/groups/software-agents.png', h: 48 } },
+    { name: 'Software Agents', from: '1997-01', to: '2001-06', years: '1997–2001' },
     { name: 'Interactive Experience', from: '2003-10', to: '2004-09', years: '2003–04' },
     { name: 'Ambient Intelligence', from: '2004-09', to: '2008-11', years: '2004–2008' },
-    { name: 'Fluid Interfaces', from: '2008-11', to: 'now', years: '2008–today',
-      logo: { src: 'assets/groups/fluid-interfaces.svg', h: 48, invert: true } }
+    { name: 'Fluid Interfaces', from: '2008-11', to: 'now', years: '2008–today' }
   ],
 
   people: [
@@ -165,30 +163,44 @@ window.GROUP = {
     // Akshay Mohan: no record yet ties him to the group; waiting on Pattie's years.
   ],
 
+  // People in the group now, who are on the themes page but not the timeline
+  // (from the Fluid Interfaces members page, October 2026).
+  current: [
+    { name: 'Valdemar Danry', role: 'PhD student', word: 'Socratic AI' },
+    { name: 'Wazeer Zulfikar', role: 'PhD student', word: 'Memoro' },
+    { name: 'Auren Liu', role: 'PhD student', word: 'AI companions' },
+    { name: 'Yasith Samaradivakara', role: 'Graduate student', word: 'Proactive wearables' },
+    { name: 'Hyung Woon Lee', role: 'Graduate student', word: 'Wearable AI for learning' },
+    { name: 'Manasi Vaidya', role: 'Graduate student', word: 'Agents for older adults' },
+    { name: 'Nathan Whitmore', role: 'Research scientist', word: 'Sleep & memory' },
+    { name: 'Cristina Velasquez Cobos', role: 'Graduate student', word: 'Slow-wave sleep' }
+  ],
+
   // The themes page: five threads that run through the group's work, each
   // gathering people who worked on related ideas, often decades apart, and so
-  // might have a good conversation. Everyone is on one thread; each is shown
-  // with the word from their row unless the thread gives them another.
+  // might have a good conversation. Everyone is on one thread, people in the
+  // group now last; each is shown with the word from their row unless the
+  // thread gives them another.
   themes: [
     { title: 'Agents that know what you like',
-      about: 'Recommenders, filters and matchmakers, and the traces people leave for one another.',
+      about: 'Recommenders, filters and matchmakers, the traces people leave, and wearables that learn their wearer.',
       people: ['Max Metral', 'Upendra Shardanand', 'Henry Lieberman', 'Leonard Foner',
-               'Alexandros Moukas', 'Alan Wexelblat', 'Aaron Zinman'] },
-    { title: 'Agents that buy, sell and trust',
-      about: 'Marketplaces where agents negotiate, set prices and earn reputations.',
+               'Alexandros Moukas', 'Alan Wexelblat', 'Aaron Zinman', 'Yasith Samaradivakara'] },
+    { title: 'Agents that act on your behalf',
+      about: 'Marketplaces where agents negotiate, set prices and earn trust, and agents that carry out everyday tasks.',
       people: ['Robert Guttman', 'Nelson Minar', 'Giorgos Zacharia', 'Daniele De Francesco',
-               'Joan Morris DiMicco', 'Jim Cruz-Youll', { name: 'Taya Leary', word: 'Behavioural economics' }] },
+               'Joan Morris DiMicco', 'Jim Cruz-Youll', { name: 'Taya Leary', word: 'Behavioural economics' }, 'Manasi Vaidya'] },
     { title: 'People, characters and AI',
-      about: 'Synthetic characters and points of view, learning alongside AI, and technology for communities.',
-      people: ['Bruce Blumberg', 'Michael Best', 'Hugo Liu', 'Pat Pataranutaporn',
-               'Caitlin Morris', 'Laura Perovich', 'Joanne Leong'] },
+      about: 'Synthetic characters and companions, points of view, and learning and reasoning alongside AI.',
+      people: ['Bruce Blumberg', 'Michael Best', 'Hugo Liu', 'Pat Pataranutaporn', 'Caitlin Morris',
+               'Laura Perovich', 'Joanne Leong', 'Valdemar Danry', 'Auren Liu', 'Hyung Woon Lee'] },
     { title: 'The world as the interface',
       about: 'Computing moved into objects, rooms, plants, robots and the body.',
       people: ['David Merrill', 'Seth Hunter', 'Suranga Nanayakkara', 'Anette von Kapri', 'Valentin Heun',
                'Anirudh Sharma', 'Sang-won Leigh', 'Dhairya Dand', 'Harpreet Sareen', 'Arnav Kapur'] },
     { title: 'Memory, sleep and the mind',
       about: 'Remembering, dreaming, attention and inner states, and the devices that support them.',
-      people: ['Judith Amores', 'Nataliya Kosmyna', 'Adam Haar Horowitz', 'Abhinandan Jain',
-               'Samantha Chan', 'Natasha Maniar', 'Kye Shimizu'] }
+      people: ['Judith Amores', 'Nataliya Kosmyna', 'Adam Haar Horowitz', 'Abhinandan Jain', 'Samantha Chan',
+               'Natasha Maniar', 'Kye Shimizu', 'Wazeer Zulfikar', 'Nathan Whitmore', 'Cristina Velasquez Cobos'] }
   ]
 };

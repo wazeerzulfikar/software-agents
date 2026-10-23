@@ -59,12 +59,8 @@
 .gp-era.tight .yr { left: auto; right: -2px; top: -26px; transition: color 0.6s; }
 .gp-era .leader { position: absolute; right: 0; top: -5px; width: 1px; height: 29px; background: rgba(185, 183, 234, 0.45); }
 .gp.sweeping .gp-era.tight.on .yr { color: var(--yellow); }
-.gp-era .logo { position: absolute; left: 0; display: block; transition: opacity 0.6s; }
-.gp-era .logo.invert { filter: invert(1); }
-.gp.sweeping .gp-era .nm,
-.gp.sweeping .gp-era .logo { opacity: 0.5; }
+.gp.sweeping .gp-era .nm { opacity: 0.5; }
 .gp.sweeping .gp-era.on .nm { opacity: 1; color: var(--yellow); }
-.gp.sweeping .gp-era.on .logo { opacity: 1; }
 .gp.sweeping .gp-era.on .rule { background: var(--yellow); }
 
 /* ---------- year axis and grid ---------- */
@@ -86,14 +82,14 @@
 .gp-name {
   position: absolute;
   left: 68px;
-  font: 400 21px/24px var(--serif);
+  font: 400 20px/24px var(--serif);
   color: #fff;
   white-space: nowrap;
   transition: opacity 0.5s, color 0.5s;
 }
 .gp-role {
   position: absolute;
-  font: 500 11.5px/24px var(--sans);
+  font: 500 11px/24px var(--sans);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--lilac);
@@ -185,6 +181,23 @@
   border-radius: 4px;
   box-shadow: inset 0 0 0 1.5px rgba(185, 183, 234, 0.55);
 }
+
+/* the button that jumps between the timeline and the themes page */
+.gp-switch {
+  right: 336px;
+  top: 1040px;
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: 500 13px/20px var(--sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lilac);
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+.gp-switch:hover { color: var(--yellow); }
 
 .gp-music {
   right: 58px;
@@ -299,7 +312,7 @@
 .gt-track {
   left: 68px;
   top: 1056px;
-  width: 1600px;
+  width: 1180px;
   height: 2px;
   border-radius: 1px;
   background: rgba(185, 183, 234, 0.2);
