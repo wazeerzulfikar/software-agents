@@ -1,11 +1,16 @@
 /* Pattie Maes's group, 1989 to now: a timeline for the alumni event.
    Draws the rows from js/group-data.js, then runs on its own: a yellow line
    walks through the years, lighting up whoever was in the group that year,
-   rests at today, and starts again. The music switch is the only control.
+   rests at today, and starts again. If config.themes is on, the timeline
+   gives way after each walk to a page of themes, the threads that run through
+   the group's work with the people on each, and then comes back. The music
+   switch is the only control.
 
-   ?still        no walking line (for screenshots)
-   ?at=1997.5    hold the line at that year
-   ?nointro      skip the bars growing in */
+   ?still          no walking line (for screenshots)
+   ?at=1997.5      hold the line at that year
+   ?nointro        skip the bars growing in
+   ?themes=off|on  override config.themes
+   ?show=themes    open on the themes page and stay there */
 (function () {
   var D = window.GROUP;
   var params = new URLSearchParams(location.search);
@@ -19,7 +24,12 @@
   var AXIS_Y, ROWS_TOP, ROWS_BOTTOM = 1030, PI_GAP = 10;
   var BAR_H = 18, WORD_H = 17, PAD = 5, WORD_SIZES = [13.5, 12.5, 11.5];
   var YEAR_MS = 1000;            // the line walks a year a second
-  var REST_MS = 9000, HOLD_MS = 5000;
+  var REST_MS = 9000, HOLD_MS = 5000, INTRO_MS = 6000;
+  var CONFIG = D.config || {};
+  var THEMES = params.has('themes') ? params.get('themes') !== 'off' : CONFIG.themes !== false;
+  THEMES = THEMES && D.themes && D.themes.length > 0;
+  var THEMES_MS = (CONFIG.themesSeconds || 45) * 1000;
+  var SHOW_THEMES = params.get('show') === 'themes';
 
   function time(s) {
     if (s === 'now') return D.now;
@@ -41,7 +51,24 @@
     if (height != null) e.style.height = height + 'px';
   }
 
-  var stage, root, back, rows = [], eras = [], head, tag, yearLabels = [];
+  var stage, root, back, rows = [], eras = [], head, tag, yearLabels = [], themes;
+
+  // the years someone was in the group, for the themes page: '1992–1995'
+  // (stays less than a year apart count as one; longer gaps show)
+  function tenure(p) {
+    var ranges = [];
+    p.spans.filter(function (s) { return !s[2]; }).forEach(function (s) {
+      var a = time(s[0]), b = time(s[1]), last = ranges[ranges.length - 1];
+      if (last && a - last.b < 1) last.b = b, last.now = s[1] === 'now';
+      else ranges.push({ a: a, b: b, now: s[1] === 'now' });
+    });
+    return ranges.map(function (r) {
+      var a = Math.floor(r.a), b = r.now ? 'today' : Math.floor(r.b);
+      return a === b ? String(a) : a + '\u2013' + b;
+    }).join(', ');
+  }
+  // a delay that belongs to the coming in, kept so the coming in can be replayed
+  function delay(e, value) { e.dataset.delay = value; e.style.transitionDelay = value; }
 
   function build() {
     stage = document.getElementById('stage');
@@ -61,7 +88,8 @@
       var r = { p: p, el: row, i: i, runs: [], on: false };
       r.name = el('div', 'gp-name', row, p.name);
       r.role = el('div', 'gp-role', row, p.role);
-      r.name.style.transitionDelay = r.role.style.transitionDelay = (0.1 + i * 0.045) + 's';
+      delay(r.name, (0.1 + i * 0.045) + 's');
+      delay(r.role, (0.1 + i * 0.045) + 's');
       rows.push(r);
     });
     var roleRight = 0;
@@ -69,7 +97,7 @@
     X0 = Math.ceil(roleRight) + 30;
 
     // what the group was called, along the top, with its logo if it had one
-    var logos = D.eras.some(function (era) { return era.logo; });
+    var logoH = Math.max.apply(null, [0].concat(D.eras.map(function (era) { return era.logo ? era.logo.h || LOGO_H : 0; })));
     D.eras.forEach(function (era) {
       var a = time(era.from), b = time(era.to);
       var e = el('div', 'gp-era', back);
@@ -82,13 +110,14 @@
       eras.push({ a: a, b: b, el: e, nm: nm, logo: era.logo });
     });
     // A name the group had for only a year or so cannot fit under its rule.
-    // It goes up into the small line of years instead, ending where its rule
-    // ends, in the room the name before it leaves.
+    // It is lifted above the band instead, in small capitals with its years,
+    // and a thin leader comes down to the rule.
     eras.forEach(function (e) {
       e.tight = e.el.offsetWidth < 90;
       if (!e.tight) return;
       e.el.classList.add('tight');
       e.el.querySelector('.yr').textContent = e.nm.textContent + ' \u00b7 ' + e.el.querySelector('.yr').textContent;
+      el('i', 'leader', e.el);
     });
     // if a single word is still too long, all the names are set smaller together
     for (var size = 32; size > 22 && eras.some(function (e) { return !e.tight && e.nm.scrollWidth > e.el.offsetWidth; }); size -= 1) {
@@ -97,12 +126,12 @@
     var nameH = Math.max.apply(null, eras.map(function (e) { return e.nm.offsetHeight; }));
     eras.forEach(function (e) {
       if (!e.logo) return;
-      var img = el('img', 'logo', e.el);
+      var img = el('img', 'logo' + (e.logo.invert ? ' invert' : ''), e.el);
       img.src = e.logo.src;
       img.alt = '';
       px(img, null, NAME_TOP + nameH + 10, null, e.logo.h || LOGO_H);
     });
-    AXIS_Y = ERA_TOP + NAME_TOP + nameH + 18 + (logos ? LOGO_H + 14 : 0);
+    AXIS_Y = ERA_TOP + NAME_TOP + nameH + 18 + (logoH ? logoH + 14 : 0);
     ROWS_TOP = AXIS_Y + 30;
     var gridTop = AXIS_Y + 26;
 
@@ -138,22 +167,24 @@
 
       // Spans that follow straight on from each other (an SM, then a PhD)
       // make one run, drawn as one bar with a faint line at each join.
+      // A span marked 'own' (leading a group of one's own) or 'leave' is a
+      // quiet bar of its own that the walking line never lights.
       var runs = [];
       p.spans.forEach(function (s) {
-        var a = time(s[0]), b = time(s[1]), own = s[2] === 'own', last = runs[runs.length - 1];
-        if (last && !own && !last.own && Math.abs(a - last.b) < 0.1) { last.joins.push(a); last.b = b; last.open = s[1] === 'now'; }
-        else runs.push({ a: a, b: b, own: own, label: s[3], open: s[1] === 'now', joins: [] });
+        var a = time(s[0]), b = time(s[1]), kind = s[2] || '', last = runs[runs.length - 1];
+        if (last && !kind && !last.kind && Math.abs(a - last.b) < 0.1) { last.joins.push(a); last.b = b; last.open = s[1] === 'now'; }
+        else runs.push({ a: a, b: b, kind: kind, label: s[3], open: s[1] === 'now', joins: [] });
       });
       runs.forEach(function (u) {
-        u.bar = el('div', 'gp-bar' + (u.open ? ' open' : '') + (u.own ? ' own' : ''), r.el);
+        u.bar = el('div', 'gp-bar' + (u.open ? ' open' : '') + (u.kind ? ' ' + u.kind : ''), r.el);
         px(u.bar, x(u.a), barTop, x(u.b) - x(u.a), BAR_H);
-        u.bar.style.transitionDelay = (0.25 + i * 0.045) + 's, 0s';
+        delay(u.bar, (0.25 + i * 0.045) + 's, 0s');
         u.joins.forEach(function (j) { px(el('i', 'join', u.bar), x(j) - x(u.a) - 1); });
-        if (!u.own) r.runs.push(u);
-        // an outline may name the group its person led, in quiet type, if it fits
+        if (!u.kind) r.runs.push(u);
+        // a quiet bar may say what it was, in quiet type, if that fits
         else if (u.label) {
           var lab = el('div', 'gp-word quiet', r.el, u.label);
-          lab.style.transitionDelay = (0.9 + i * 0.045) + 's';
+          delay(lab, (0.9 + i * 0.045) + 's');
           r.quiet = { el: lab, run: u, top: barTop + (BAR_H - WORD_H) / 2 };
         }
       });
@@ -162,7 +193,7 @@
       if (p.word) {
         var longest = r.runs.reduce(function (m, u) { return u.b - u.a > m.b - m.a ? u : m; });
         r.word = { el: el('div', 'gp-word', r.el, p.word), run: longest, top: barTop + (BAR_H - WORD_H) / 2 };
-        r.word.el.style.transitionDelay = (0.9 + i * 0.045) + 's';
+        delay(r.word.el, (0.9 + i * 0.045) + 's');
       }
 
       if (p.pi) px(el('div', 'gp-sep', root), null, top + pitch + PI_GAP / 2);
@@ -179,7 +210,12 @@
   function placeWords() {
     rows.forEach(function (r) {
       if (!r.quiet) return;
-      var a = x(r.quiet.run.a), room = x(r.quiet.run.b) - a - (r.quiet.run.open ? 46 : 0), width = r.quiet.el.offsetWidth;
+      var a = x(r.quiet.run.a), room = x(r.quiet.run.b) - a - (r.quiet.run.open ? 46 : 0);
+      for (var k = 0; k < WORD_SIZES.length; k++) {
+        r.quiet.el.style.fontSize = WORD_SIZES[k] + 'px';
+        if (r.quiet.el.offsetWidth + 2 * PAD <= room) break;
+      }
+      var width = r.quiet.el.offsetWidth;
       if (width + 2 * PAD <= room) px(r.quiet.el, Math.round(a + (room - width) / 2), r.quiet.top);
       else r.quiet.el.remove();
     });
@@ -248,6 +284,7 @@
       setYear(t);
       if (t < D.now) return requestAnimationFrame(frame);
       setTimeout(function () {
+        if (THEMES) return showThemes();
         root.classList.remove('sweeping');
         head.classList.remove('on');
         clearYear();
@@ -255,6 +292,91 @@
       }, HOLD_MS);
     }
     requestAnimationFrame(frame);
+  }
+
+  // ---------- coming in ----------
+  function intro() {
+    root.querySelectorAll('[data-delay]').forEach(function (e) { e.style.transitionDelay = e.dataset.delay; });
+    root.classList.add('in');
+    // once everything has come in, the walking line's changes should be immediate
+    setTimeout(function () {
+      root.querySelectorAll('[data-delay]').forEach(function (e) { e.style.transitionDelay = ''; });
+    }, 4500);
+  }
+
+  // ---------- the themes page ----------
+  function buildThemes() {
+    var byName = {};
+    D.people.forEach(function (p) { byName[p.name] = p; });
+    themes = { el: el('div', 'gt', stage), cols: [], at: -1 };
+    px(themes.el, 0, 0, 1920, 1080);
+    el('h2', 'gt-title', themes.el, 'Conversations to have');
+    el('p', 'gt-lede', themes.el, 'Five threads run through the group\u2019s work, from 1989 to today. ' +
+      'The people on each one worked on related ideas, often decades apart. Find each other.');
+    var n = D.themes.length, gap = 44, w = (1920 - 2 * NAME_LEFT - gap * (n - 1)) / n;
+    D.themes.forEach(function (t, i) {
+      var c = el('section', 'gt-col', themes.el);
+      px(c, NAME_LEFT + i * (w + gap), 226, w);
+      c.style.transitionDelay = (0.5 + i * 0.14) + 's';
+      el('div', 'gt-num', c, (i < 9 ? '0' : '') + (i + 1));
+      el('div', 'gt-rule', c);
+      el('h3', 'gt-name', c, t.title);
+      el('p', 'gt-about', c, t.about);
+      var list = el('ul', 'gt-people', c);
+      t.people.map(function (entry) {
+        var p = byName[typeof entry === 'string' ? entry : entry.name];
+        return p && { p: p, word: (entry.word || p.word || '') };
+      }).filter(Boolean).sort(function (u, v) { return time(u.p.spans[0][0]) - time(v.p.spans[0][0]); })
+        .forEach(function (u) {
+          var li = el('li', '', list);
+          el('span', 'who', li, u.p.name);
+          el('span', 'what', li, (u.word ? u.word + ' \u00b7 ' : '') + tenure(u.p));
+        });
+      themes.cols.push(c);
+    });
+    var track = el('div', 'gt-track', themes.el);
+    themes.fill = el('div', 'fill', track);
+  }
+
+  // one thread after another is picked out while the page is up
+  function spotlight(i) {
+    themes.cols.forEach(function (c, k) { c.classList.toggle('on', k === i); });
+  }
+
+  function showThemes(stay) {
+    stage.classList.add('themes');
+    var each = THEMES_MS / themes.cols.length, i = 0;
+    spotlight(0);
+    themes.fill.style.transition = 'none';
+    themes.fill.style.transform = 'scaleX(0)';
+    themes.fill.offsetWidth;
+    themes.fill.style.transition = 'transform ' + THEMES_MS + 'ms linear';
+    themes.fill.style.transform = stay ? 'scaleX(0)' : 'scaleX(1)';
+    var tick = setInterval(function () {
+      i = (i + 1) % themes.cols.length;
+      spotlight(i);
+    }, each);
+    if (stay) return;
+    setTimeout(function () {
+      clearInterval(tick);
+      backToTimeline();
+    }, THEMES_MS);
+  }
+
+  function backToTimeline() {
+    // set the timeline back to empty while it is still hidden, then let it come in again
+    root.classList.add('snap');
+    root.classList.remove('in', 'sweeping');
+    head.classList.remove('on');
+    clearYear();
+    root.offsetWidth;
+    requestAnimationFrame(function () {
+      root.classList.remove('snap');
+      stage.classList.remove('themes');
+      themes.cols.forEach(function (c) { c.classList.remove('on'); });
+      intro();
+      setTimeout(sweep, INTRO_MS);
+    });
   }
 
   // ---------- fitting the stage to the window ----------
@@ -288,18 +410,18 @@
         // ?nointro only skips the coming in; the walking line still eases
         if (!STILL && AT == null) setTimeout(function () { root.classList.remove('snap'); }, 200);
       }
+      if (THEMES || SHOW_THEMES) buildThemes();
       requestAnimationFrame(function () {
-        root.classList.add('in');
-        // once everything has come in, the walking line's changes should be immediate
-        setTimeout(function () {
-          root.querySelectorAll('.gp-name, .gp-role, .gp-word, .gp-bar').forEach(function (e) { e.style.transitionDelay = ''; });
-        }, 4500);
-        if (AT != null) {
+        intro();
+        if (SHOW_THEMES) {
+          if (STILL) stage.classList.add('snap');
+          showThemes(true);
+        } else if (AT != null) {
           root.classList.add('sweeping');
           head.classList.add('on');
           setYear(AT);
         } else if (!STILL) {
-          setTimeout(sweep, params.has('nointro') ? 1500 : 6000);
+          setTimeout(sweep, params.has('nointro') ? 1500 : INTRO_MS);
         }
       });
     });

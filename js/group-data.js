@@ -15,19 +15,32 @@ window.GROUP = {
   from: 1989.5,
   to: 2027.0,
   now: 2026 + 9.7 / 12,          // late October 2026
-  // What Pattie's group was called. Henry Lieberman ran it as Software Agents
-  // while she was on leave (late 2001 to 2003); she came back to a new group,
-  // Interactive Experience by October 2003, Ambient Intelligence by October
-  // 2004 and Fluid Interfaces by spring 2009 (the groups' archived pages).
+  // Switches for the installation.
+  config: {
+    themes: true,          // after each walk through the years, show the themes page
+    themesSeconds: 45      // and stay on it this long before coming back
+  },
+
+  // What Pattie's group was called, from the Media Lab's own lists of groups
+  // and the groups' sites in the Wayback Machine: Autonomous Agents until late
+  // 1996, Software Agents until June 2001, when Henry Lieberman took the group
+  // (and its name) on. Pattie came back from leave to a new group, Interactive
+  // Experience (October 2003), renamed Ambient Intelligence in September 2004
+  // and Fluid Interfaces in November 2008. Only two had a logo.
   eras: [
-    { name: 'Software Agents', from: '1991-09', to: '2003-09', years: '1991–2003' },
-    { name: 'Interactive Experience', from: '2003-09', to: '2004-09', years: '2003–04' },
-    { name: 'Ambient Intelligence', from: '2004-09', to: '2009-03', years: '2004–2009' },
-    { name: 'Fluid Interfaces', from: '2009-03', to: 'now', years: '2009–today' }
+    { name: 'Autonomous Agents', from: '1991-09', to: '1997-01', years: '1991–1996' },
+    { name: 'Software Agents', from: '1997-01', to: '2001-06', years: '1997–2001',
+      logo: { src: 'assets/groups/software-agents.png', h: 48 } },
+    { name: 'Interactive Experience', from: '2003-10', to: '2004-09', years: '2003–04' },
+    { name: 'Ambient Intelligence', from: '2004-09', to: '2008-11', years: '2004–2008' },
+    { name: 'Fluid Interfaces', from: '2008-11', to: 'now', years: '2008–today',
+      logo: { src: 'assets/groups/fluid-interfaces.svg', h: 48, invert: true } }
   ],
+
   people: [
     { name: 'Pattie Maes', role: 'Professor', pi: true,
-      spans: [['1989-09', 'now']] },
+      spans: [['1989-09', '2001-12'], ['2001-12', '2003-08', 'leave', 'On leave'], ['2003-08', 'now']],
+      note: 'At the MIT AI Lab from 1989, the Media Lab from 1991. On leave from about December 2001 to August 2003 (the Media Lab faculty list).' },
 
     // ---- the agents years ----
     { name: 'Leonard Foner', role: 'SM · PhD', word: 'Yenta',
@@ -37,8 +50,8 @@ window.GROUP = {
       spans: [['1992-09', '1994-06'], ['1994-06', '1995-06']],
       note: 'Undergraduate in the group from about 1992 (his SM thanks it for "this crazy three years"); SB June 1994, SM June 1995 (MotorMouth, the engine behind HOMR).' },
     { name: 'Bruce Blumberg', role: 'PhD', word: 'ALIVE',
-      spans: [['1992-09', '1996-09']],
-      note: 'Pattie wrote "Ben Bloomberg". Back to school in 1992; thesis submitted September 1996, when he became faculty (Synthetic Characters); degree February 1997, the first PhD from the group.' },
+      spans: [['1991-09', '1996-09']],
+      note: 'Pattie wrote "Ben Bloomberg". Her first PhD student, from 1991 (strategy+business, 2000); thesis submitted September 1996, when he became faculty (Synthetic Characters); degree February 1997, the first PhD from the group.' },
     { name: 'Upendra Shardanand', role: 'MEng', word: 'Ringo',
       spans: [['1993-09', '1994-09'], ['1994-09', '1995-03']],
       note: 'SB and MEng (EECS, not an SM) September 1994, supervised by Pattie. Start 1993 estimated. Still with the group until Agents Inc. (later Firefly) was founded in March 1995.' },
@@ -150,5 +163,32 @@ window.GROUP = {
       note: 'A first-year master\'s student in autumn 2024 (his How to Make (Almost) Anything page); a graduate student on his profile until at least April 2026 and a former one by October 2026, so mid-2026 is assumed. Wearables that sense mood and modulate physiology.' },
 
     // Akshay Mohan: no record yet ties him to the group; waiting on Pattie's years.
+  ],
+
+  // The themes page: five threads that run through the group's work, each
+  // gathering people who worked on related ideas, often decades apart, and so
+  // might have a good conversation. Everyone is on one thread; each is shown
+  // with the word from their row unless the thread gives them another.
+  themes: [
+    { title: 'Agents that know what you like',
+      about: 'Recommenders, filters and matchmakers, and the traces people leave for one another.',
+      people: ['Max Metral', 'Upendra Shardanand', 'Henry Lieberman', 'Leonard Foner',
+               'Alexandros Moukas', 'Alan Wexelblat', 'Aaron Zinman'] },
+    { title: 'Agents that buy, sell and trust',
+      about: 'Marketplaces where agents negotiate, set prices and earn reputations.',
+      people: ['Robert Guttman', 'Nelson Minar', 'Giorgos Zacharia', 'Daniele De Francesco',
+               'Joan Morris DiMicco', 'Jim Cruz-Youll', { name: 'Taya Leary', word: 'Behavioural economics' }] },
+    { title: 'People, characters and AI',
+      about: 'Synthetic characters and points of view, learning alongside AI, and technology for communities.',
+      people: ['Bruce Blumberg', 'Michael Best', 'Hugo Liu', 'Pat Pataranutaporn',
+               'Caitlin Morris', 'Laura Perovich', 'Joanne Leong'] },
+    { title: 'The world as the interface',
+      about: 'Computing moved into objects, rooms, plants, robots and the body.',
+      people: ['David Merrill', 'Seth Hunter', 'Suranga Nanayakkara', 'Anette von Kapri', 'Valentin Heun',
+               'Anirudh Sharma', 'Sang-won Leigh', 'Dhairya Dand', 'Harpreet Sareen', 'Arnav Kapur'] },
+    { title: 'Memory, sleep and the mind',
+      about: 'Remembering, dreaming, attention and inner states, and the devices that support them.',
+      people: ['Judith Amores', 'Nataliya Kosmyna', 'Adam Haar Horowitz', 'Abhinandan Jain',
+               'Samantha Chan', 'Natasha Maniar', 'Kye Shimizu'] }
   ]
 };
