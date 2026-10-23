@@ -322,7 +322,7 @@
     var per = Math.min(5, D.themes.length), gap = 44, w = (1920 - 2 * NAME_LEFT - gap * (per - 1)) / per;
     D.themes.forEach(function (t, i) {
       var c = el('section', 'gt-col', themes.el);
-      px(c, NAME_LEFT + (i % per) * (w + gap), 206 + Math.floor(i / per) * 404, w);
+      px(c, NAME_LEFT + (i % per) * (w + gap), 206 + Math.floor(i / per) * 392, w);
       c.style.transitionDelay = (0.5 + i * 0.09) + 's';
       el('div', 'gt-num', c, (i < 9 ? '0' : '') + (i + 1));
       el('div', 'gt-rule', c);

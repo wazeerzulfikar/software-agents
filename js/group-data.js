@@ -153,6 +153,9 @@ window.GROUP = {
     { name: 'Samantha Chan', role: 'Postdoc', word: 'Memory augmentation',
       spans: [['2022-10', '2024-12']],
       note: 'Postdoctoral fellow after a PhD at the University of Auckland\'s Augmented Human Lab. Her Media Lab profile is first archived in March 2023, so the autumn 2022 start is an estimate; she left to become an assistant professor at NTU in January 2025.' },
+    { name: 'Neo Mohsenvand', role: 'PhD · Postdoc', word: 'Brain-wave AI',
+      spans: [['2016-09', '2022-02'], ['2022-02', '2022-10']],
+      note: 'Mostafa "Neo" Mohsenvand. On the group page as a PhD student by November 2017 (the page lagged a year behind its new students, so autumn 2016 is assumed); PhD February 2022 (classifying and displaying brain waves through self-supervised learning); a postdoc on his profile in June 2022 and a past member by January 2023. Then Head of Research at BrainCo.' },
     { name: 'Nataliya Kosmyna', role: 'Postdoc · Scientist', word: 'Brain-computer interfaces',
       spans: [['2017-09', '2021-10'], ['2021-10', '2026-06']],
       note: 'Joined in 2017 after a postdoc at Inria (her profile; month assumed). A postdoctoral associate on her profile until at least September 2021, then a research scientist "from 2021 till 2026" (AttentivU, the cognitive cost of LLM chatbots); a research scientist still in April 2026.' },
@@ -209,7 +212,7 @@ window.GROUP = {
       people: ['Suranga Nanayakkara', 'Sang-won Leigh', 'Harpreet Sareen', 'Arnav Kapur', 'Kye Shimizu'] },
     { title: 'Memory and the brain',
       about: 'Augmenting memory, and reading the brain.',
-      people: ['Nataliya Kosmyna', 'Samantha Chan', 'Natasha Maniar', 'Wazeer Zulfikar', 'Nathan Whitmore'] },
+      people: ['Neo Mohsenvand', 'Nataliya Kosmyna', 'Samantha Chan', 'Natasha Maniar', 'Wazeer Zulfikar', 'Nathan Whitmore'] },
     { title: 'Sleep and dreams',
       about: 'Shaping sleep and dreams, and listening to the body\u2019s own signals.',
       people: ['Judith Amores', 'Adam Haar Horowitz', 'Abhinandan Jain', 'Cristina Velasquez Cobos'] }

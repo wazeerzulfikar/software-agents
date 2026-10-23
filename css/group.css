@@ -305,7 +305,7 @@
   color: var(--lilac);
 }
 .gt-people { list-style: none; margin: 14px 0 0; padding: 0; }
-.gt-people li { margin: 0 0 8px; }
+.gt-people li { margin: 0 0 6px; }
 .gt-people .who { display: block; font: 400 21px/25px var(--serif); color: #fff; white-space: nowrap; }
 .gt-people .what {
   display: block;
